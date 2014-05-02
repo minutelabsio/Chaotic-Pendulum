@@ -1,0 +1,19 @@
+/* line 5, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+html, body, #wrap-outer {
+  height: 100%;
+}
+
+/* line 9, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+/* line 18, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#viewport canvas {
+  position: absolute;
+}

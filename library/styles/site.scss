@@ -1,0 +1,21 @@
+// site styles
+// @import 'compass/css3';
+@import '_vars';
+
+html, body, #wrap-outer {
+    height: 100%;
+}
+
+#viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background: $deep-grey-dark;
+
+    canvas {
+        position: absolute;
+    }
+}
