@@ -8,7 +8,6 @@ require.config({
     },
 
     shim: {
-        // Add shims for things here
     },
 
     paths: {
@@ -31,6 +30,10 @@ require.config({
 
         // jQuery
         'jquery': 'vendor/jquery',
+        'hammer.jquery': 'vendor/hammer.jquery',
+
+        // stop. hammer time.
+        'hammerjs': 'vendor/hammer',
 
         // draw helper
         'canvas-draw': 'modules/canvas-draw',

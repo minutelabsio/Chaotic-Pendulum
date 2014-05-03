@@ -19,3 +19,14 @@ html, body, #wrap-outer {
         position: absolute;
     }
 }
+
+#controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    // background: #fff;
+    padding: 1em;
+
+}

@@ -125,8 +125,12 @@ define(function(){
         return Draw;
     };
 
-    Draw.lines = function( points, ctx ){
+    Draw.lines = function( points, ctx, closed ){
         ctx = ctx || Draw.ctx;
+        if ( typeof ctx !== 'object' ){
+            closed = ctx;
+            ctx = Draw.ctx;
+        }
 
         var i
             ,p = points[ 0 ]
@@ -151,7 +155,10 @@ define(function(){
             }
         }
 
-        ctx.closePath();
+
+        if ( closed ){
+            ctx.closePath();
+        }
         ctx.stroke();
 
         return Draw;
@@ -230,13 +237,13 @@ define(function(){
                 [ x, y + flip * size ]
                 ,[ x + size / sqrt2, y - flip * size / sqrt2 ]
                 ,[ x - size / sqrt2, y - flip * size / sqrt2 ]
-            ], ctx);
+            ], ctx, true);
         } else {
             Draw.lines([
                 [ x + flip * size, y ]
                 ,[ x - flip * size / sqrt2, y - size / sqrt2 ]
                 ,[ x - flip * size / sqrt2, y + size / sqrt2 ]
-            ], ctx);
+            ], ctx, true);
         }
 
         return Draw;
@@ -277,7 +284,7 @@ define(function(){
 
     Draw.preload = function( src, cb ){
         var i, l, done;
-        
+
         if ( typeof src === 'string' ){
 
             getImage( src, cb );

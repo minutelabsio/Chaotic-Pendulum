@@ -17,3 +17,13 @@ html, body, #wrap-outer {
 #viewport canvas {
   position: absolute;
 }
+
+/* line 23, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1em;
+}
