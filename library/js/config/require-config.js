@@ -38,6 +38,8 @@ require.config({
         // draw helper
         'canvas-draw': 'modules/canvas-draw',
 
+        'jscolor': 'vendor/jscolor/jscolor',
+
         // requestAnimationFrame polyfill
         'raf': 'vendor/raf'
 

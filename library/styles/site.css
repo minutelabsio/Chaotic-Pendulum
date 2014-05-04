@@ -1,9 +1,45 @@
-/* line 5, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 1, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/_slider.scss */
+.slider {
+  margin: 10px 16px;
+  border: 1px solid #1a1a1a;
+  height: 6px;
+  background: #fff;
+  z-index: 1;
+  cursor: pointer;
+}
+/* line 9, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/_slider.scss */
+.slider .handle {
+  background: gainsboro;
+  border: 1px solid #626262;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+}
+/* line 18, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/_slider.scss */
+.slider .handle:hover {
+  background: #fff;
+}
+/* line 23, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/_slider.scss */
+.slider .meter {
+  z-index: 1;
+  background: #2888e4;
+  border: 1px solid #2888e4;
+}
+
+/* line 6, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 html, body, #wrap-outer {
   height: 100%;
 }
 
-/* line 9, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 10, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #viewport {
   position: absolute;
   top: 0;
@@ -13,12 +49,12 @@ html, body, #wrap-outer {
   overflow: hidden;
   background: #1a1a1a;
 }
-/* line 18, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 19, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #viewport canvas {
   position: absolute;
 }
 
-/* line 23, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 24, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #controls {
   position: absolute;
   bottom: 0;
@@ -26,4 +62,64 @@ html, body, #wrap-outer {
   right: 0;
   z-index: 100;
   padding: 1em;
+}
+/* line 33, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#controls .ctrl-remove {
+  display: none;
+}
+/* line 38, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#controls.edit .ctrl-remove {
+  display: inline-block;
+}
+
+/* line 44, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14em;
+  background: #434343;
+  padding: 1em;
+  border: 1px solid #626262;
+  z-index: 100;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+}
+/* line 56, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu label {
+  float: left;
+  width: 4em;
+  display: block;
+  color: #ededed;
+  text-align: left;
+}
+/* line 64, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu .slider {
+  margin-left: 4em;
+  margin-right: 0;
+}
+/* line 68, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu .slider .handle:after {
+  content: attr(data-val);
+  position: absolute;
+  top: -1.5em;
+  width: 80px;
+  color: #ededed;
+  margin-left: -29px;
+  text-align: center;
+  font-size: 14px;
+}
+/* line 80, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu input {
+  width: 9em;
+}
+/* line 85, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu button,
+#ctx-menu .btn {
+  margin-top: 1em;
+  padding: 0.4em 1em;
 }

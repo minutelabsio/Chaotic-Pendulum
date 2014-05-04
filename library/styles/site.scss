@@ -1,6 +1,7 @@
 // site styles
-// @import 'compass/css3';
+@import 'compass/css3';
 @import '_vars';
+@import '_slider';
 
 html, body, #wrap-outer {
     height: 100%;
@@ -29,4 +30,60 @@ html, body, #wrap-outer {
     // background: #fff;
     padding: 1em;
 
+    .ctrl-remove {
+        display: none;
+    }
+
+    &.edit {
+        .ctrl-remove {
+            display: inline-block;
+        }
+    }
+}
+
+#ctx-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 14em;
+    background: $deep-grey;
+    padding: 1em;
+    border: 1px solid $deep-grey-light;
+    z-index: 100;
+    @include border-radius( 3px );
+
+    label {
+        float: left;
+        width: 4em;
+        display: block;
+        color: $grey-light;
+        text-align: left;
+    }
+
+    .slider {
+        margin-left: 4em;
+        margin-right: 0;
+
+        .handle:after {
+            content: attr(data-val);
+            position: absolute;
+            top: -1.5em;
+            width: 80px;
+            color: $grey-light;
+            margin-left: -29px;
+            text-align: center;
+            font-size: 14px;
+        }
+    }
+
+    input {
+        width: 9em;
+    }
+
+    button,
+    .btn {
+        margin-top: 1em;
+        padding: 0.4em 1em;
+    }
 }
