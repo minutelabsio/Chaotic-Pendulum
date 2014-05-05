@@ -35,6 +35,10 @@ html, body, #wrap-outer {
     }
 
     &.edit {
+        .ctrl-pause,
+        .ctrl-download {
+            display: none;
+        }
         .ctrl-remove {
             display: inline-block;
         }
@@ -79,6 +83,11 @@ html, body, #wrap-outer {
 
     input {
         width: 9em;
+    }
+
+    .color {
+        outline: none;
+        border-color: $deep-grey-dark;
     }
 
     button,

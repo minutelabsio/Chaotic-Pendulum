@@ -3,6 +3,7 @@ define([
     'hammer.jquery',
     'moddef',
     'jscolor',
+    'vendor/chroma',
     'canvas-draw',
     'physicsjs',
     'physicsjs/renderers/canvas',
@@ -17,6 +18,7 @@ define([
     _hjq,
     M,
     _jscolor,
+    chroma,
     Draw,
 
     Physics,
@@ -55,6 +57,11 @@ define([
         ,'orange': 'rgb(239, 132, 51)'
         ,'orangeLight': 'rgb(247, 195, 138)'
         ,'orangeDark': 'rgb(159, 80, 31)'
+
+        ,'yellow': 'rgb(228, 212, 44)'
+        ,'yellowLight': 'rgb(242, 232, 110)'
+        ,'yellowDark': 'rgb(139, 129, 23)'
+
     };
 
     function throttle( fn, delay, scope ){
@@ -191,7 +198,7 @@ define([
             ,lineWidth: 2
         }
         ,pathStyles = {
-            lineWidth: 1
+            lineWidth: 3
             ,shadowBlur: 2
         }
         ,selectedStyles = {
@@ -261,7 +268,8 @@ define([
                 ,styles: $.extend({}, pendulumStyles, { fillStyle: colors.blueDark, strokeStyle: colors.blueDark })
             });
 
-            this.colors = [ colors.red, colors.blue, colors.yellow, colors.green, colors.grey ];
+            this.colors = [ colors.blueLight, colors.redLight, colors.yellowLight, colors.greenLight, colors.greyLight ];
+            this.colorsDark = [ colors.blueDark, colors.redDark, colors.yellowDark, colors.greenDark, colors.greyDark ];
 
             this.view = world.renderer().createView( this.center.geometry, pendulumStyles );
 
@@ -283,10 +291,12 @@ define([
                 ,radius: 5
                 ,view: this.view
                 ,initial: v
-                ,color: this.colors[ l - 1 ] || defaultPathColor
+                ,colorMin: chroma(this.colorsDark[ l - 1 ] || defaultPathColor).darker(30).hex()
+                ,colorMax: chroma(this.colors[ l - 1 ] || defaultPathColor).hex()
                 ,path: true
             });
 
+            b.colorScale = getColorScale( b );
             this.bodies.push( b );
             this.world.add( b );
             this.constraints.distanceConstraint( this.bodies[ l - 1 ], b, 0.9 );
@@ -322,6 +332,13 @@ define([
         }
     };
 
+    function getColorScale( body ){
+        var bzInt = chroma.interpolate.bezier([ body.colorMin, body.colorMax ]);
+        return chroma.scale( bzInt )
+            .domain([0, 2])
+            ;
+    }
+
     // Page-level Mediator
     var Mediator = M({
 
@@ -349,10 +366,38 @@ define([
                 self.emit('resize');
             }, true);
 
+            self.on({
+                pause: function(){
+                    $('#controls .ctrl-pause')
+                        .addClass('paused')
+                        .html('Unpause')
+                        ;
+                }
+                ,unpause: function(){
+                    $('#controls .ctrl-pause')
+                        .removeClass('paused')
+                        .html('Pause')
+                        ;
+                }
+            })
+
             $(function(){
                 var ctrls = $('#controls')
 
                 ctrls.hammer()
+                    .on('touch', '.ctrl-download', function( e ){
+                        var img = self.getImage();
+                        this.href = img;
+                        this.download = 'minutelabs-chaotic-pendulum.png';
+                    })
+                    .on('touch', '.ctrl-pause', function( e ){
+                        e.preventDefault();
+                        var $this = $(this)
+                            ,paused = $this.hasClass('paused')
+                            ;
+
+                        self.emit(paused ? 'unpause' : 'pause');
+                    })
                     .on('touch', '.ctrl-edit', function( e ){
                         e.preventDefault();
                         var $this = $(this);
@@ -411,6 +456,31 @@ define([
             });
         }
 
+        ,getImage: function(){
+            var layers = ['paths', 'main']
+                ,el
+                ,ctx = this.renderer.hiddenCtx
+                ,canvas = this.renderer.hiddenCanvas
+                ,opacity
+                ,w = this.renderer.el.width
+                ,h = this.renderer.el.height
+                ;
+
+            canvas.width = w;
+            canvas.height = h;
+            ctx.fillStyle = colors.deepGreyDark;
+            ctx.fillRect( 0, 0, w, h );
+            for ( var i = 0, l = layers.length; i < l; ++i ){
+
+                el = this.renderer.layer( layers[i] ).el;
+                opacity = parseFloat(el.style.opacity, 10);
+                ctx.globalAlpha = isNaN(opacity) ? 1 : opacity;
+                ctx.drawImage(el, 0, 0);
+            }
+            ctx.globalAlpha = 1;
+            return canvas.toDataURL('image/png');
+        }
+
         ,initPhysics: function( world ){
 
             var self = this
@@ -442,8 +512,7 @@ define([
                 viewWidth = self.width;
                 viewHeight = self.height;
 
-                renderer.el.width = viewWidth;
-                renderer.el.height = viewHeight;
+                renderer.resize( viewWidth, viewHeight );
 
                 center = Physics.vector( viewWidth, viewHeight ).mult( 0.5 );
                 renderer.layer('main').options.offset = center;
@@ -486,7 +555,7 @@ define([
                     }
                 }
                 ,edit: function(){
-                    world.pause();
+                    self.emit('pause');
                     setTimeout(function(){
                         world._meta.interpolateTime = 0;
                         pendulum.reset();
@@ -497,9 +566,16 @@ define([
                 }
                 ,start: function(){
                     self.contextualMenu( null );
+                    self.emit('unpause');
+                }
+                ,pause: function(){
+                    world.pause();
+                }
+                ,unpause: function(){
                     world.unpause();
                 }
                 ,remove: function(){
+                    self.contextualMenu( null );
                     pendulum.removeVertex();
                 }
             });
@@ -554,7 +630,7 @@ define([
 
                     if ( b.path ){
                         for ( var j = 0, ll = p.length; j < ll; j+=2 ){
-                            pathStyles.strokeStyle = pathStyles.shadowColor = b.color;
+                            pathStyles.strokeStyle = pathStyles.shadowColor = b.colorScale( b.state.vel.norm() ).hex();
                             Draw
                                 .styles(pathStyles)
                                 .line( p[j], p[j+1], p[j+2], p[j+3] )
@@ -645,6 +721,13 @@ define([
                 ,y = body.state.pos.y + self.height / 2 + 10
                 ;
 
+            if ( x > (self.width - el.outerWidth()) ){
+                x -= el.outerWidth() + 20;
+            }
+            if ( y > (self.height - el.outerHeight()) ){
+                y -= el.outerHeight() + 20;
+            }
+
             body.oldView = body.view;
             body.view = self.selectedView;
 
@@ -659,7 +742,8 @@ define([
             });
 
             el.find('#ctrl-mass').trigger('refresh', body.mass);
-            el.find('#ctrl-color').val( body.color || defaultPathColor ).css('background', body.color || defaultPathColor);
+            el.find('#ctrl-color-min').val( body.colorMin || defaultPathColor ).css('background', body.colorMin || defaultPathColor);
+            el.find('#ctrl-color-max').val( body.colorMax || defaultPathColor ).css('background', body.colorMax || defaultPathColor);
             el.find('#ctrl-path').toggleClass( 'on', body.path );
         }
 
@@ -680,10 +764,19 @@ define([
             });
             massLabel = $('#ctrl-mass .handle');
 
-            $('#ctrl-color').on('change', function( e ){
+            $('#ctrl-color-min').on('change', function( e ){
                 var b = self.$ctxMenu.data('body');
                 if ( b ){
-                    b.color = $(this).val();
+                    b.colorMin = $(this).val();
+                    b.colorScale = getColorScale( b );
+                }
+            });
+
+            $('#ctrl-color-max').on('change', function( e ){
+                var b = self.$ctxMenu.data('body');
+                if ( b ){
+                    b.colorMax = $(this).val();
+                    b.colorScale = getColorScale( b );
                 }
             });
 

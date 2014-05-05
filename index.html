@@ -5,13 +5,17 @@ layout: default
 <canvas id="physics"></canvas>
 <div id="controls">
     <button class="ctrl-edit pop">Edit</button>
+    <button class="ctrl-pause">Pause</button>
+    <a href="#" class="btn ctrl-download">Save Image</a>
     <button class="ctrl-remove danger">Remove Vertex</button>
 </div>
 
 <div id="ctx-menu">
     <label for="ctrl-mass">mass:</label>
     <div id="ctrl-mass"></div>
-    <label for="ctrl-color">color:</label>
-    <input class="color" id="ctrl-color"/>
+    <label for="ctrl-color-min">slow:</label>
+    <input class="color" id="ctrl-color-min"/>
+    <label for="ctrl-color-max">fast:</label>
+    <input class="color" id="ctrl-color-max"/>
     <button id="ctrl-path" class="toggle">Draw Paths</button>
 </div>
