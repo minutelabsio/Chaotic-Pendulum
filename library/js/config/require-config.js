@@ -8,6 +8,7 @@ require.config({
     },
 
     shim: {
+        
     },
 
     paths: {
@@ -31,6 +32,7 @@ require.config({
         // jQuery
         'jquery': 'vendor/jquery',
         'hammer.jquery': 'vendor/hammer.jquery',
+        'minicolors': 'vendor/jquery.minicolors',
 
         // stop. hammer time.
         'hammerjs': 'vendor/hammer',
@@ -58,12 +60,12 @@ require.config({
     map: {
 
         '*' : {
-            'jquery': 'modules/adapters/jquery', // jQuery noconflict adapter
+            // 'jquery': 'modules/adapters/jquery', // jQuery noconflict adapter
             'site-config': 'config/site-config.json'
-        },
+        }//,
 
-        'modules/adapters/jquery': {
-            'jquery': 'jquery'
-        }
+        // 'modules/adapters/jquery': {
+        //     'jquery': 'jquery'
+        // }
     }
 });

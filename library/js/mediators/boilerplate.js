@@ -2,7 +2,7 @@ define([
     'jquery',
     'hammer.jquery',
     'moddef',
-    'jscolor',
+    'minicolors',
     'vendor/chroma',
     'canvas-draw',
     'physicsjs',
@@ -17,7 +17,7 @@ define([
     $,
     _hjq,
     M,
-    _jscolor,
+    _jqminicolors,
     chroma,
     Draw,
 
@@ -299,7 +299,7 @@ define([
             b.colorScale = getColorScale( b );
             this.bodies.push( b );
             this.world.add( b );
-            this.constraints.distanceConstraint( this.bodies[ l - 1 ], b, 0.9 );
+            this.constraints.distanceConstraint( this.bodies[ l - 1 ], b, 1 );
 
             return b;
         }
@@ -422,6 +422,9 @@ define([
                 var body;
 
                 $('#viewport').hammer()
+                    .on('touchstart', function( e ){
+                        e.preventDefault();
+                    })
                     .on('touch', 'canvas', function( e ){
                         var pos = e.gesture.center;
                         pos = { x: pos.pageX - self.width / 2, y: pos.pageY - self.height/2 };
@@ -440,14 +443,14 @@ define([
                             }
                         }
                     })
-                    .on('dragstart', function( e ){
+                    .on('dragstart', 'canvas', function( e ){
                         self.emit('grab', body);
                     })
-                    .on('drag', function( e ){
+                    .on('drag', 'canvas', function( e ){
                         e.preventDefault();
                         self.emit('drag', e.gesture);
                     })
-                    .on('dragend', function( e ){
+                    .on('dragend', 'canvas', function( e ){
                         body = false;
                         e.preventDefault();
                         self.emit('release', e.gesture);
@@ -742,8 +745,8 @@ define([
             });
 
             el.find('#ctrl-mass').trigger('refresh', body.mass);
-            el.find('#ctrl-color-min').val( body.colorMin || defaultPathColor ).css('background', body.colorMin || defaultPathColor);
-            el.find('#ctrl-color-max').val( body.colorMax || defaultPathColor ).css('background', body.colorMax || defaultPathColor);
+            el.find('#ctrl-color-min').minicolors( 'value', body.colorMin || defaultPathColor );
+            el.find('#ctrl-color-max').minicolors( 'value', body.colorMax || defaultPathColor );
             el.find('#ctrl-path').toggleClass( 'on', body.path );
         }
 
@@ -764,19 +767,28 @@ define([
             });
             massLabel = $('#ctrl-mass .handle');
 
-            $('#ctrl-color-min').on('change', function( e ){
-                var b = self.$ctxMenu.data('body');
-                if ( b ){
-                    b.colorMin = $(this).val();
-                    b.colorScale = getColorScale( b );
+            $('input.color').on('touchstart', function( e ){
+                e.preventDefault();
+                $(this).focus();
+            });
+
+            $('#ctrl-color-min').minicolors({
+                'change': function( hex ){
+                    var b = self.$ctxMenu.data('body');
+                    if ( b ){
+                        b.colorMin = hex;
+                        b.colorScale = getColorScale( b );
+                    }
                 }
             });
 
-            $('#ctrl-color-max').on('change', function( e ){
-                var b = self.$ctxMenu.data('body');
-                if ( b ){
-                    b.colorMax = $(this).val();
-                    b.colorScale = getColorScale( b );
+            $('#ctrl-color-max').minicolors({
+                'change': function( hex ){
+                    var b = self.$ctxMenu.data('body');
+                    if ( b ){
+                        b.colorMax = hex;
+                        b.colorScale = getColorScale( b );
+                    }
                 }
             });
 
