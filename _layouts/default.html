@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{{ site.title }} | MinuteLabs.io</title>
   <meta name="description" content="{{ site.description }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
   <!-- Google+ snippet. -->
   <meta itemprop="name" content="{{ site.title }} | MinuteLabs.io">
@@ -26,12 +26,12 @@
   <script src="{{ site.ml_library }}/js/vendor/require.js" data-main="{{ site.library_path }}/js/page-boilerplate"></script>
 </head>
 <body>
-  
+
   <div id="wrap-outer">
     <div data-offcanvas="wrap">
       {% include nav.html %}
       <div id="viewport" role="main">
-        
+
         {{ content }}
 
       </div>
@@ -47,7 +47,7 @@
 
   <script src="{{ site.ml_assets }}/labs-nav.js"></script>
   <script src="{{ site.ml_assets }}/ga.js" async></script>
-  
+
   {% if site.show.comments and site.show.details %}
   <script type="text/javascript">
       var disqus_shortname = 'minutelabsio';
