@@ -31,8 +31,27 @@ html, body, #wrap-outer {
     // background: #fff;
     padding: 1em;
 
-    .ctrl-remove {
+    .edit-group {
         display: none;
+    }
+
+    &.state-add {
+        .ctrl-pause,
+        .ctrl-download,
+        .ctrl-edit,
+        .ctrl-edit-velocities {
+            display: none;
+        }
+    }
+
+    &.state-edit-velocities {
+        .ctrl-pause,
+        .ctrl-download,
+        .ctrl-remove,
+        .ctrl-edit,
+        .ctrl-add {
+            display: none;
+        }
     }
 
     &.edit {
@@ -40,7 +59,7 @@ html, body, #wrap-outer {
         .ctrl-download {
             display: none;
         }
-        .ctrl-remove {
+        .edit-group {
             display: inline-block;
         }
     }
@@ -52,9 +71,9 @@ html, body, #wrap-outer {
     top: 0;
     left: 0;
     width: 14em;
-    background: $deep-grey;
+    background: darken($deep-grey-dark, 10);
     padding: 1em;
-    border: 1px solid $deep-grey-light;
+    border: 1px solid $deep-grey;
     z-index: 100;
     @include border-radius( 3px );
 
@@ -80,6 +99,22 @@ html, body, #wrap-outer {
             text-align: center;
             font-size: 14px;
         }
+    }
+
+    .ctrl-close {
+        position: absolute;
+        top: -0.6em;
+        right: -0.6em;
+        width: 1.3em;
+        height: 1.3em;
+        background: $deep-blue;
+        color: $blue-light;
+        text-align: center;
+        font-size: 20px;
+        line-height: 1.15em;
+        cursor: pointer;
+        border: 1px solid $blue-light;
+        @include border-radius( 50% );
     }
 
     input {
