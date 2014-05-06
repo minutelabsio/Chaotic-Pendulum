@@ -7,15 +7,19 @@ layout: default
     <button class="ctrl-edit pop">Edit</button>
     <button class="ctrl-pause">Pause</button>
     <a href="#" class="btn ctrl-download">Save Image</a>
-    <button class="ctrl-remove danger">Remove Vertex</button>
+    <div class="edit-group">
+        <button class="ctrl-add pop">Add Vertices</button>
+        <button class="ctrl-edit-velocities">Velocity Editor</button>
+        <button class="ctrl-remove danger">Remove a Vertex</button>
+        
+    </div>
 </div>
 
 <div id="ctx-menu">
     <label for="ctrl-mass">mass:</label>
     <div id="ctrl-mass"></div>
-    <label for="ctrl-color-min">slow:</label>
-    <input class="color" id="ctrl-color-min"/>
-    <label for="ctrl-color-max">fast:</label>
-    <input class="color" id="ctrl-color-max"/>
+    <label for="ctrl-color">color:</label>
+    <input class="color" id="ctrl-color"/>
     <button id="ctrl-path" class="toggle">Draw Paths</button>
+    <div class="ctrl-close">x</div>
 </div>

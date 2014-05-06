@@ -254,6 +254,29 @@ define([
         };
     });
 
+    Physics.body.mixin({
+        'color': function( hex ){
+            if ( !hex ){
+                return this._color;
+            }
+
+            this._color = chroma(hex).hex();
+            this.colorMax = chroma(hex).alpha(0.1);
+            this.colorMin = chroma(hex);
+            this.colorScale = getColorScale( this );
+
+        }
+    });
+
+    function getColorScale( body ){
+        // var bzInt = chroma.interpolate( body.colorMin, body.colorMax, 1 );
+        return chroma.scale( [body.colorMin, body.colorMax] )
+            .domain([0, 1], 'log')
+            .out('css')
+            // .correctLightness( true )
+            ;
+    }
+
     var Pendulum = function( world, x, y ){
         this.init( world, x, y );
     };
@@ -268,8 +291,7 @@ define([
                 ,styles: $.extend({}, pendulumStyles, { fillStyle: colors.blueDark, strokeStyle: colors.blueDark })
             });
 
-            this.colors = [ colors.blueLight, colors.redLight, colors.yellowLight, colors.greenLight, colors.greyLight ];
-            this.colorsDark = [ colors.blueDark, colors.redDark, colors.yellowDark, colors.greenDark, colors.greyDark ];
+            this.colors = [ colors.blue, colors.red, colors.yellow, colors.green, colors.grey ];
 
             this.view = world.renderer().createView( this.center.geometry, pendulumStyles );
 
@@ -288,15 +310,13 @@ define([
             var b = Physics.body('circle', {
                 x: x
                 ,y: y
-                ,radius: 5
+                ,radius: 15
                 ,view: this.view
                 ,initial: v
-                ,colorMin: chroma(this.colorsDark[ l - 1 ] || defaultPathColor).darker(30).hex()
-                ,colorMax: chroma(this.colors[ l - 1 ] || defaultPathColor).hex()
                 ,path: true
             });
 
-            b.colorScale = getColorScale( b );
+            b.color( this.colors[ l - 1 ] || defaultPathColor );
             this.bodies.push( b );
             this.world.add( b );
             this.constraints.distanceConstraint( this.bodies[ l - 1 ], b, 1 );
@@ -331,13 +351,6 @@ define([
             return this;
         }
     };
-
-    function getColorScale( body ){
-        var bzInt = chroma.interpolate.bezier([ body.colorMin, body.colorMax ]);
-        return chroma.scale( bzInt )
-            .domain([0, 2])
-            ;
-    }
 
     // Page-level Mediator
     var Mediator = M({
@@ -417,6 +430,20 @@ define([
                         e.preventDefault();
                         self.emit('remove');
                     })
+                    .on('touch', '.ctrl-add', function( e ){
+                        e.preventDefault();
+                        var on = ctrls.toggleClass('state-add').is('.state-add');
+                        $(this).html( on ? 'Done' : 'Add Vertices' );
+                        self.addVertex = on;
+                        self.contextualMenu( null );
+                    })
+                    .on('touch', '.ctrl-edit-velocities', function( e ){
+                        e.preventDefault();
+                        var on = ctrls.toggleClass('state-edit-velocities').is('.state-edit-velocities');
+                        $(this).html( on ? 'Done' : 'Velocity Editor' );
+                        self.editVelocities = on;
+                        self.contextualMenu( null );
+                    })
                     ;
 
                 var body;
@@ -436,10 +463,23 @@ define([
                             if ( body ){
                                 // pos.body = body;
 
-                                self.emit('select', body);
-                            } else {
+                                // self.emit('select', body);
+                            } else if ( self.addVertex ) {
 
                                 self.emit( 'create', pos );
+                            }
+                        }
+                    })
+                    .on('tap', 'canvas', function( e ){
+                        var pos = e.gesture.center;
+                        pos = { x: pos.pageX - self.width / 2, y: pos.pageY - self.height/2 };
+                        e.preventDefault();
+                        if ( self.edit && !self.addVertex ){
+
+                            body = self.world.findOne({ $at: pos });
+
+                            if ( body ){
+                                self.emit('select', body);
                             }
                         }
                     })
@@ -531,23 +571,35 @@ define([
                 create: function( e, pos ){
                     var p = pendulum.addVertex( pos.x, pos.y );
                     tracker.applyTo( pendulum.bodies );
-                    self.contextualMenu( p );
-                    // pos.body = p;
-                    // self.emit( 'grab', pos );
                 }
                 ,grab: function( e, body ){
-                    var drag;
+                    var drag, orig, vis = self.$ctxMenu.is(':visible');
+
                     if ( body && body.initial ){
-                        drag = function( e, g ){
-                            body.state.vel.set( g.deltaX, g.deltaY ).mult( 1/vFactor );
-                            body.initial.vel.x = body.state.vel.x;
-                            body.initial.vel.y = body.state.vel.y;
-                        };
+                        if ( self.editVelocities ){
+
+                            drag = function( e, g ){
+                                body.state.vel.set( g.deltaX, g.deltaY ).mult( 1/vFactor );
+                                body.initial.vel.x = body.state.vel.x;
+                                body.initial.vel.y = body.state.vel.y;
+                            };
+
+                        } else {
+                            orig = body.state.pos.clone();
+                            drag = function( e, g ){
+                                body.state.pos.set( g.deltaX, g.deltaY ).vadd( orig );
+                                body.initial.x = body.state.pos.x;
+                                body.initial.y = body.state.pos.y;
+                            };
+                        }
+
                         self.on('drag', drag);
                         self.on('release', function( e ){
                             self.off(e.topic, e.handler);
                             self.off('drag', drag);
-                            self.$ctxMenu.show();
+                            if ( vis ){
+                                self.contextualMenu( body );
+                            }
                         });
                         self.$ctxMenu.hide();
                     }
@@ -633,7 +685,7 @@ define([
 
                     if ( b.path ){
                         for ( var j = 0, ll = p.length; j < ll; j+=2 ){
-                            pathStyles.strokeStyle = pathStyles.shadowColor = b.colorScale( b.state.vel.norm() ).hex();
+                            pathStyles.strokeStyle = pathStyles.shadowColor = b.colorScale( b.state.vel.norm() );
                             Draw
                                 .styles(pathStyles)
                                 .line( p[j], p[j+1], p[j+2], p[j+3] )
@@ -721,11 +773,11 @@ define([
             }
 
             var x = body.state.pos.x + self.width / 2 + 10
-                ,y = body.state.pos.y + self.height / 2 + 10
+                ,y = body.state.pos.y + self.height / 2 + 20
                 ;
 
             if ( x > (self.width - el.outerWidth()) ){
-                x -= el.outerWidth() + 20;
+                x -= (x + el.outerWidth() - self.width + 20);
             }
             if ( y > (self.height - el.outerHeight()) ){
                 y -= el.outerHeight() + 20;
@@ -734,19 +786,13 @@ define([
             body.oldView = body.view;
             body.view = self.selectedView;
 
-            if ( oldBody === body ){
-                el.toggle();
-                return;
-            }
-
             el.data('body', body).show().css({
                 top: y
                 ,left: x
             });
 
             el.find('#ctrl-mass').trigger('refresh', body.mass);
-            el.find('#ctrl-color-min').minicolors( 'value', body.colorMin || defaultPathColor );
-            el.find('#ctrl-color-max').minicolors( 'value', body.colorMax || defaultPathColor );
+            el.find('#ctrl-color').minicolors( 'value', body.color() );
             el.find('#ctrl-path').toggleClass( 'on', body.path );
         }
 
@@ -772,22 +818,11 @@ define([
                 $(this).focus();
             });
 
-            $('#ctrl-color-min').minicolors({
+            $('#ctrl-color').minicolors({
                 'change': function( hex ){
                     var b = self.$ctxMenu.data('body');
                     if ( b ){
-                        b.colorMin = hex;
-                        b.colorScale = getColorScale( b );
-                    }
-                }
-            });
-
-            $('#ctrl-color-max').minicolors({
-                'change': function( hex ){
-                    var b = self.$ctxMenu.data('body');
-                    if ( b ){
-                        b.colorMax = hex;
-                        b.colorScale = getColorScale( b );
+                        b.color(hex);
                     }
                 }
             });
@@ -798,6 +833,11 @@ define([
                 if ( b ){
                     b.path = !!$(this).hasClass('on');
                 }
+            });
+
+            self.$ctxMenu.hammer().on('touch', '.ctrl-close', function( e ){
+                e.preventDefault();
+                self.contextualMenu( null );
             });
 
 
