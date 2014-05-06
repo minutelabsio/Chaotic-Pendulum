@@ -261,20 +261,19 @@ define([
             }
 
             this._color = chroma(hex).hex();
-            this.colorMax = chroma(hex).alpha(0.1);
-            this.colorMin = chroma(hex);
             this.colorScale = getColorScale( this );
-
         }
     });
 
     function getColorScale( body ){
-        // var bzInt = chroma.interpolate( body.colorMin, body.colorMax, 1 );
-        return chroma.scale( [body.colorMin, body.colorMax] )
-            .domain([0, 1], 'log')
-            .out('css')
-            // .correctLightness( true )
-            ;
+        var c = chroma( body._color );
+
+        return function( v ){
+            v += 1;
+            v *= v;
+            v -= 1;
+            return c.alpha( Math.max(1 - v/2, 0.05) ).css();
+        }
     }
 
     var Pendulum = function( world, x, y ){
@@ -640,7 +639,7 @@ define([
             first.state.vel.set( 0, 0.4 );
             first.initial.vel.y = 0.4;
             first.path = false;
-            pendulum.addVertex( 200, 0 );
+            pendulum.addVertex( 180, 0 );
             tracker.applyTo( pendulum.bodies );
 
             function len( x, y, x2, y2 ){
@@ -677,6 +676,8 @@ define([
                 Draw( this.ctx )
                     .offset( center.x, center.y )
                     ;
+
+                this.ctx.globalCompositeOperation = 'color-dodge';
 
                 for ( var i = 0, l = pendulum.bodies.length; i < l; i++ ){
                     b = pendulum.bodies[i];
