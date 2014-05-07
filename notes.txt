@@ -1,0 +1,10 @@
+Play -> Start
+Select menu unintuitive
+zoom?
+
+balls same color as selected color?
+remove last vertex
+add vertex move
+outside click to close ctx menu
+"Edit initial velocities"
+randomize button

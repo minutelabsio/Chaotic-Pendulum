@@ -359,7 +359,7 @@ html, body, #wrap-outer {
   right: 0;
   bottom: 0;
   overflow: hidden;
-  background: #1a1a1a;
+  background: black;
 }
 /* line 20, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #viewport canvas {
