@@ -29,6 +29,7 @@ define(function(){
         ,shadowBlur: 0
         ,shadowColor: 'rgba(0,0,0,0)'
         ,lineCap: 'square'
+        ,lineJoin: 'round'
     };
 
     Draw.animThrottle = function( fn, scope ){
@@ -141,17 +142,24 @@ define(function(){
 
         ctx.beginPath();
 
-        if ( p.length <= 2 ){
+        if ( typeof p === 'number' ){
+            p = points;
             ctx.moveTo( p[0] + ox, p[1] + oy );
-        }
+            for ( i = 2; i < l-1; i+=2 ){
+                ctx.lineTo( p[i] + ox, p[i+1] + oy );
+            }
+        } else if ( p.length <= 2 ){
+            ctx.moveTo( p[0] + ox, p[1] + oy );
+            for (i = 1; i < l; i++ ){
+                p = points[ i ];
+                ctx.lineTo( p[0] + ox, p[1] + oy );
+            }
+        } else {
 
-        for ( i = 1; i < l; i++ ){
-            p = points[ i ];
-            if ( p.length > 2 ){
+            for (i = 0; i < l; i++ ){
+                p = points[ i ];
                 ctx.moveTo( p[0] + ox, p[1] + oy );
                 ctx.lineTo( p[2] + ox, p[3] + oy );
-            } else {
-                ctx.lineTo( p[0] + ox, p[1] + oy );
             }
         }
 

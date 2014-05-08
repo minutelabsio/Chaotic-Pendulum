@@ -15,24 +15,38 @@ html, body, #wrap-outer {
     right: 0;
     bottom: 0;
     overflow: hidden;
-    background: $deep-grey-dark;
+    background: black;
 
     canvas {
         position: absolute;
     }
+}
+.pjs-meta {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: #fff;
+    z-index: 100;
 }
 
 #controls {
     position: absolute;
     bottom: 0;
     left: 0;
-    right: 0;
     z-index: 100;
     // background: #fff;
     padding: 1em;
 
+    .btn-group {
+        position: absolute;
+        bottom: 60px;
+        left: 1em;
+        width: 160px;
+    }
+
     .edit-group {
         display: none;
+        width: 300px;
     }
 
     &.state-add {
@@ -44,15 +58,7 @@ html, body, #wrap-outer {
         }
     }
 
-    &.state-edit-velocities {
-        .ctrl-pause,
-        .ctrl-download,
-        .ctrl-remove,
-        .ctrl-edit,
-        .ctrl-add {
-            display: none;
-        }
-    }
+
 
     &.edit {
         .ctrl-pause,
@@ -71,9 +77,9 @@ html, body, #wrap-outer {
     top: 0;
     left: 0;
     width: 14em;
-    background: darken($deep-grey-dark, 10);
+    background: #fff;
     padding: 1em;
-    border: 1px solid $deep-grey;
+    border: 1px solid $grey;
     z-index: 100;
     @include border-radius( 3px );
 
@@ -81,7 +87,7 @@ html, body, #wrap-outer {
         float: left;
         width: 4em;
         display: block;
-        color: $grey-light;
+        color: $deep-grey-dark;
         text-align: left;
     }
 
@@ -127,7 +133,7 @@ html, body, #wrap-outer {
     }
     .color {
         outline: none;
-        border-color: $deep-grey-dark;
+        border-color: $grey-dark;
     }
 
     button,

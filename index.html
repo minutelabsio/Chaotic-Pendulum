@@ -5,13 +5,14 @@ layout: default
 <canvas id="physics"></canvas>
 <div id="controls">
     <button class="ctrl-edit pop">Edit</button>
-    <button class="ctrl-pause">Pause</button>
-    <a href="#" class="btn ctrl-download">Save Image</a>
-    <div class="edit-group">
-        <button class="ctrl-add pop">Add Vertices</button>
-        <button class="ctrl-edit-velocities">Velocity Editor</button>
-        <button class="ctrl-remove danger">Remove a Vertex</button>
-        
+    <button class="ctrl-randomize">Randomize!</button>
+    <div class="btn-group block">
+        <button class="ctrl-pause">Pause</button>
+        <a href="#" class="btn ctrl-download">Save Image</a>
+    </div>
+    <div class="edit-group btn-group block">
+        <button class="ctrl-remove danger">Remove Last Vertex</button>
+        <button class="ctrl-edit-velocities">Edit Initial Velocities</button>
     </div>
 </div>
 
@@ -21,5 +22,5 @@ layout: default
     <label for="ctrl-color">color:</label>
     <input class="color" id="ctrl-color"/>
     <button id="ctrl-path" class="toggle">Draw Paths</button>
-    <div class="ctrl-close">x</div>
+    <div class="ctrl-close">&mdash;</div>
 </div>
