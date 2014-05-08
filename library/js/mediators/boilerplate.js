@@ -426,6 +426,61 @@ define([
                 last.initial.vel.y = dir.y;
                 last.state.vel.clone( dir );
             }
+        },
+
+        hash: function( hash ){
+            var data, i, l, b;
+            if ( hash === undefined ){
+                data = [];
+                for ( i = 1, l = this.bodies.length; i < l; i++ ){
+                    b = this.bodies[ i ];
+                    data.push({
+                        x: b.initial.x
+                        ,y: b.initial.y
+                        ,vx: b.initial.vel.x
+                        ,vy: b.initial.vel.y
+                        ,mass: b.mass
+                        ,color: b.color()
+                        ,path: b.path
+                    });
+                }
+                return '#pendulum=' + window.encodeURIComponent(window.btoa(JSON.stringify( data )));
+            }
+
+            // find settings
+            hash = hash.match(/pendulum=([^&]*)/);
+
+            if ( !hash || !hash.length ){
+                return false;
+            }
+
+            // decode
+            try {
+                hash = window.atob(window.decodeURIComponent(hash[1]));
+                data = $.parseJSON(hash);
+            } catch( e ){
+                return false;
+            }
+
+            if ( !data ){
+                return false;
+            }
+
+            // set pendulum state
+            while ( this.bodies.length > 1 ){
+                this.removeVertex();
+            }
+
+            for ( i = 0, l = data.length; i < l; i++ ){
+                b = this.addVertex( data[i].x, data[i].y );
+                b.initial.vel.x = data[i].vx;
+                b.initial.vel.y = data[i].vy;
+                b.mass = data[i].mass;
+                b.color( data[i].color );
+                b.path = data[i].path;
+            }
+
+            return true;
         }
     };
 
@@ -666,6 +721,7 @@ define([
                     Draw.clear( renderer.layer('paths').ctx );
                     Draw.clear( renderer.layer('paths').hdctx );
                     tracker.applyTo( pendulum.bodies );
+                    self.emit('modified');
                 }
                 ,create: function( e, pos ){
                     if ( !self.selectedBody && !self.editVelocities ){
@@ -699,6 +755,7 @@ define([
                                 if ( vis ){
                                     self.contextualMenu( body );
                                 }
+                                self.emit('modified');
                             });
                             self.$ctxMenu.hide();
                         }
@@ -726,6 +783,7 @@ define([
                             if ( vis ){
                                 self.contextualMenu( body );
                             }
+                            self.emit('modified');
                         });
                         self.$ctxMenu.hide();
                     }
@@ -764,14 +822,20 @@ define([
                     self.contextualMenu( null );
                     pendulum.removeVertex();
                 }
+                ,modified: function(){
+                    window.location.hash = pendulum.hash();
+                }
             });
 
-            var first = pendulum.addVertex( 140, 0 )
-            first.mass = 10;
-            first.state.vel.set( 0, 0.15 );
-            first.initial.vel.y = 0.15;
-            first.path = false;
-            pendulum.addVertex( 240, 0 );
+            if ( !pendulum.hash( window.location.hash ) ){
+                var first = pendulum.addVertex( 140, 0 )
+                first.mass = 10;
+                first.state.vel.set( 0, 0.15 );
+                first.initial.vel.y = 0.15;
+                first.path = false;
+                pendulum.addVertex( 240, 0 );
+            }
+
             pendulum.reset();
             tracker.applyTo( pendulum.bodies );
 
@@ -991,6 +1055,7 @@ define([
                 if ( b ){
                     b.mass = val;
                 }
+                self.emit('modified');
             });
             massLabel = $('#ctrl-mass .handle');
 
@@ -1005,6 +1070,7 @@ define([
                     if ( b ){
                         b.color(hex);
                     }
+                    self.emit('modified');
                 }
             });
 
@@ -1014,6 +1080,7 @@ define([
                 if ( b ){
                     b.path = !!$(this).hasClass('on');
                 }
+                self.emit('modified');
             });
 
             self.$ctxMenu.hammer().on('touch', '.ctrl-close', function( e ){

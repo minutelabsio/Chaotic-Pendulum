@@ -58,7 +58,7 @@ html, body, #wrap-outer {
         }
     }
 
-    
+
 
     &.edit {
         .ctrl-pause,
@@ -77,9 +77,9 @@ html, body, #wrap-outer {
     top: 0;
     left: 0;
     width: 14em;
-    background: darken($deep-grey-dark, 10);
+    background: #fff;
     padding: 1em;
-    border: 1px solid $deep-grey;
+    border: 1px solid $grey;
     z-index: 100;
     @include border-radius( 3px );
 
@@ -87,7 +87,7 @@ html, body, #wrap-outer {
         float: left;
         width: 4em;
         display: block;
-        color: $grey-light;
+        color: $deep-grey-dark;
         text-align: left;
     }
 
@@ -133,7 +133,7 @@ html, body, #wrap-outer {
     }
     .color {
         outline: none;
-        border-color: $deep-grey-dark;
+        border-color: $grey-dark;
     }
 
     button,
