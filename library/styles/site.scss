@@ -21,18 +21,32 @@ html, body, #wrap-outer {
         position: absolute;
     }
 }
+.pjs-meta {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: #fff;
+    z-index: 100;
+}
 
 #controls {
     position: absolute;
     bottom: 0;
     left: 0;
-    right: 0;
     z-index: 100;
     // background: #fff;
     padding: 1em;
 
+    .btn-group {
+        position: absolute;
+        bottom: 60px;
+        left: 1em;
+        width: 160px;
+    }
+
     .edit-group {
         display: none;
+        width: 300px;
     }
 
     &.state-add {
@@ -44,15 +58,7 @@ html, body, #wrap-outer {
         }
     }
 
-    &.state-edit-velocities {
-        .ctrl-pause,
-        .ctrl-download,
-        .ctrl-remove,
-        .ctrl-edit,
-        .ctrl-add {
-            display: none;
-        }
-    }
+    
 
     &.edit {
         .ctrl-pause,

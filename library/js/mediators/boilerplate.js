@@ -210,7 +210,8 @@ define([
         }
         ,pathStyles = {
             lineWidth: 3
-            ,shadowBlur: 2
+            ,lineCap: 'butt'
+            // ,shadowBlur: 4
         }
         ,selectedStyles = {
             lineWidth: 3
@@ -276,6 +277,7 @@ define([
             }
 
             this._color = chroma(hex).hex();
+            this.lastColor = this._color;
             this.colorScale = getColorScale( this );
         }
         ,'velocityArrowHead': function( ret ){
@@ -512,7 +514,7 @@ define([
                     .on('touch', '.ctrl-edit-velocities', function( e ){
                         e.preventDefault();
                         var on = ctrls.toggleClass('state-edit-velocities').is('.state-edit-velocities');
-                        $(this).html( on ? 'Done' : 'Velocity Editor' );
+                        $(this).html( on ? 'Edit Initial Positions' : 'Edit Initial Velocities' );
                         self.editVelocities = on;
                         self.contextualMenu( null );
                     })
@@ -630,6 +632,7 @@ define([
                 ,width: viewWidth
                 ,height: viewHeight
                 ,offset: center
+                // ,meta:true
             });
 
             // add the renderer
@@ -661,6 +664,7 @@ define([
                     pendulum.randomize( viewHeight / 6 );
                     pendulum.reset();
                     Draw.clear( renderer.layer('paths').ctx );
+                    Draw.clear( renderer.layer('paths').hdctx );
                     tracker.applyTo( pendulum.bodies );
                 }
                 ,create: function( e, pos ){
@@ -740,6 +744,7 @@ define([
                         pendulum.reset();
                         tracker.clear();
                         Draw.clear( renderer.layer('paths').ctx );
+                        Draw.clear( renderer.layer('paths').hdctx );
                         self.contextualMenu( pendulum.bodies[ pendulum.bodies.length - 1 ] );
                         world.render();
                     }, 100);
@@ -761,10 +766,10 @@ define([
                 }
             });
 
-            var first = pendulum.addVertex( 100, 0 )
-            first.mass = 20;
-            first.state.vel.set( 0, 0.5 );
-            first.initial.vel.y = 0.5;
+            var first = pendulum.addVertex( 140, 0 )
+            first.mass = 10;
+            first.state.vel.set( 0, 0.15 );
+            first.initial.vel.y = 0.15;
             first.path = false;
             pendulum.addVertex( 240, 0 );
             pendulum.reset();
@@ -798,7 +803,7 @@ define([
 
                 if ( self.selectedBody ){
                     b = self.selectedBody;
-                    this.ctx.setLineDash( [3] );
+                    this.ctx.setLineDash( [3.14] );
                     Draw( this.ctx )
                         .styles( selectedOutline )
                         .circle( b.state.pos.x, b.state.pos.y, b.geometry.radius )
@@ -813,7 +818,7 @@ define([
             pathRenderer.hdel.height = viewHeight * 2;
             pathRenderer.hdctx = pathRenderer.hdel.getContext('2d');
             pathRenderer.render = function(){
-                var b, p, grad, c, oldc, j, ll;
+                var b, p, grad, c, oldc, j, ll, path = [];
 
                 Draw( this.ctx )
                     .offset( center.x, center.y )
@@ -838,7 +843,8 @@ define([
                         grad = this.ctx.createLinearGradient( p[0], p[1], p[ll-2], p[ll-1] );
                         grad.addColorStop( 0, oldc || c );
                         grad.addColorStop( 1, c );
-                        pathStyles.strokeStyle = pathStyles.shadowColor = grad || c;
+                        pathStyles.strokeStyle = grad || c;
+                        // pathStyles.shadowColor = c;
 
                         Draw( this.ctx )
                             .styles( pathStyles )
@@ -850,17 +856,14 @@ define([
 
                         b.oldColor = c;
 
-                        for ( j = 0; j < ll - 2; j+=2 ){
+                        Draw( this.ctx )
+                            .lines( p )
+                            ;
 
-                            Draw( this.ctx )
-                                .line( p[j], p[j+1], p[j+2], p[j+3] )
-                                ;
-
-                            // draw to HD canvas
-                            Draw( this.hdctx )
-                                .line( p[j], p[j+1], p[j+2], p[j+3] )
-                                ;
-                        }
+                        // draw to HD canvas
+                        Draw( this.hdctx )
+                            .lines( p )
+                            ;
                     }
 
                     if ( p[ ll-1 ] ){
@@ -1019,7 +1022,7 @@ define([
             });
 
 
-            self.world = Physics( { timestep: 1 }, self.initPhysics.bind( self ) );
+            self.world = Physics( { timestep: 2 }, self.initPhysics.bind( self ) );
         }
 
     }, ['events']);
