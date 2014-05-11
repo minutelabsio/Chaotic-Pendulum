@@ -8,7 +8,7 @@ require.config({
     },
 
     shim: {
-        
+
     },
 
     paths: {
