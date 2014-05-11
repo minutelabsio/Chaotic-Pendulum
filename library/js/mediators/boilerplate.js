@@ -395,6 +395,7 @@ define([
                 // set the max anticipated speed based on energy calculation
                 h += last.state.pos.dist( b.state.pos );
                 b.maxSpeed = Math.sqrt(2 * E / b.mass);
+                b.view = this.world.renderer().createView( Physics.geometry('circle', { radius: 2 * Math.log(b.mass+1) }), pendulumStyles);
                 last = b;
             }
             return this;
