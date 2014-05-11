@@ -6,21 +6,38 @@ layout: default
 <div id="controls">
     <button class="ctrl-edit pop">Edit</button>
     <button class="ctrl-randomize">Randomize!</button>
-    <div class="btn-group block">
+    <div class="btn-group block above">
         <button class="ctrl-pause">Pause</button>
         <a href="#" class="btn ctrl-download">Save Image</a>
+        <button class="ctrl-share ok">Share</button>
     </div>
-    <div class="edit-group btn-group block">
+    <div class="edit-type">
+        <label>Edit initial ...</label>
+        <div class="btn-group">
+            <button class="ctrl-edit-positions toggle on">Positions</button>
+            <button class="ctrl-edit-velocities toggle">Velocities</button>
+        </div>
+    </div>
+    <div class="edit-group btn-group block above">
+        <button class="ctrl-add pop">Add Vertex</button>
         <button class="ctrl-remove danger">Remove Last Vertex</button>
-        <button class="ctrl-edit-velocities">Edit Initial Velocities</button>
     </div>
 </div>
 
 <div id="ctx-menu">
+    <h3 class="title">vertex options</h3>
     <label for="ctrl-mass">mass:</label>
+    <input type="text" class="ctrl-mass" />
     <div id="ctrl-mass"></div>
     <label for="ctrl-color">color:</label>
     <input class="color" id="ctrl-color"/>
-    <button id="ctrl-path" class="toggle">Draw Paths</button>
-    <div class="ctrl-close">&mdash;</div>
+    <label for="ctrl-path">draw paths?</label>
+    <input id="ctrl-path" type="checkbox" />
+    <!-- <div class="ctrl-close">&mdash;</div> -->
+</div>
+
+<div id="shareOverlay">
+    <h3 class="title">Share your creation!</h3>
+    <input type="text" />
+    <button class="ctrl-close">close</button>
 </div>

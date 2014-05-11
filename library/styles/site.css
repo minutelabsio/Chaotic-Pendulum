@@ -352,6 +352,42 @@ html, body, #wrap-outer {
 }
 
 /* line 11, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#shareOverlay {
+  display: none;
+  background: #fff;
+  width: 400px;
+  padding: 1em;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  margin-left: -200px;
+  margin-top: -100px;
+  z-index: 100;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+}
+/* line 24, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#shareOverlay h3 {
+  font-size: 22px;
+  text-align: center;
+  margin: 1em 0;
+}
+/* line 30, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#shareOverlay input {
+  display: block;
+  margin: 0 auto 1em;
+  width: 100%;
+}
+/* line 36, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#shareOverlay button {
+  display: block;
+  margin: auto;
+}
+
+/* line 42, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #viewport {
   position: absolute;
   top: 0;
@@ -361,12 +397,12 @@ html, body, #wrap-outer {
   overflow: hidden;
   background: black;
 }
-/* line 20, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 51, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #viewport canvas {
   position: absolute;
 }
 
-/* line 24, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 55, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 .pjs-meta {
   position: absolute;
   bottom: 0;
@@ -375,7 +411,7 @@ html, body, #wrap-outer {
   z-index: 100;
 }
 
-/* line 32, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 63, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #controls {
   position: absolute;
   bottom: 0;
@@ -383,42 +419,76 @@ html, body, #wrap-outer {
   z-index: 100;
   padding: 1em;
 }
-/* line 40, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
-#controls .btn-group {
+/* line 71, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#controls .edit-type {
+  display: none;
+  position: absolute;
+  left: 1em;
+  bottom: 200px;
+  background: #fff;
+  width: 16.7em;
+  padding: 1em;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+}
+/* line 82, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#controls .edit-type label {
+  display: block;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 1em;
+}
+/* line 89, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#controls .edit-type .btn-group {
+  width: 19.5em;
+  font-size: 0.75em;
+  margin: auto;
+}
+/* line 96, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#controls .above {
   position: absolute;
   bottom: 60px;
   left: 1em;
   width: 160px;
 }
-/* line 47, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 103, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #controls .edit-group {
   display: none;
   width: 300px;
 }
-/* line 56, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 112, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #controls.state-add .ctrl-pause,
 #controls.state-add .ctrl-download,
 #controls.state-add .ctrl-edit,
 #controls.state-add .ctrl-edit-velocities {
   display: none;
 }
-/* line 65, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 121, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #controls.edit .ctrl-pause,
 #controls.edit .ctrl-download {
   display: none;
 }
-/* line 68, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
-#controls.edit .edit-group {
-  display: inline-block;
+/* line 125, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#controls.edit .edit-group,
+#controls.edit .edit-type {
+  display: block;
 }
 
-/* line 74, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 131, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #ctx-menu {
   display: none;
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 14em;
+  bottom: 0;
+  right: 0;
+  width: 20em;
   background: #fff;
   padding: 1em;
   border: 1px solid gainsboro;
@@ -429,31 +499,42 @@ html, body, #wrap-outer {
   -o-border-radius: 3px;
   border-radius: 3px;
 }
-/* line 86, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 143, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu .title {
+  margin: 0;
+  padding: 0 0 1em;
+}
+/* line 148, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #ctx-menu label {
+  clear: left;
   float: left;
-  width: 4em;
+  width: 7em;
+  margin-bottom: 0.5em;
   display: block;
   color: #1a1a1a;
   text-align: left;
 }
-/* line 94, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 158, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu .ctrl-mass {
+  width: 4em;
+  float: left;
+}
+/* line 163, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu #ctrl-path {
+  float: left;
+  margin-top: 0.5em;
+}
+/* line 168, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #ctx-menu .slider {
-  margin-left: 4em;
+  margin-left: 12em;
   margin-right: 0;
 }
-/* line 98, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
-#ctx-menu .slider .handle:after {
-  content: attr(data-val);
-  position: absolute;
-  top: -1.5em;
-  width: 80px;
-  color: #ededed;
-  margin-left: -29px;
-  text-align: center;
-  font-size: 14px;
+/* line 184, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+#ctx-menu .minicolors-theme-default .minicolors-swatch {
+  top: 0.2em;
+  left: 0.2em;
 }
-/* line 110, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 189, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #ctx-menu .ctrl-close {
   position: absolute;
   top: -0.6em;
@@ -473,21 +554,21 @@ html, body, #wrap-outer {
   -o-border-radius: 50%;
   border-radius: 50%;
 }
-/* line 126, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 205, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #ctx-menu input {
   width: 8em;
 }
-/* line 130, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 209, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #ctx-menu .minicolors {
   float: left;
   margin-bottom: 0.4em;
 }
-/* line 134, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 213, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #ctx-menu .color {
   outline: none;
   border-color: #c8c8c8;
 }
-/* line 140, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
+/* line 219, /Users/wellcaffeinated/Documents/github/minutelabs/Chaotic-Pendulum/library/styles/site.scss */
 #ctx-menu button,
 #ctx-menu .btn {
   margin-top: 1em;

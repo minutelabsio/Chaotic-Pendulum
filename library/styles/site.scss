@@ -8,6 +8,37 @@ html, body, #wrap-outer {
     height: 100%;
 }
 
+#shareOverlay {
+    display: none;
+    background: #fff;
+    width: 400px;
+    padding: 1em;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    margin-left: -200px;
+    margin-top: -100px;
+    z-index: 100;
+    @include border-radius( 3px );
+
+    h3 {
+        font-size: 22px;
+        text-align: center;
+        margin: 1em 0;
+    }
+
+    input {
+        display: block;
+        margin: 0 auto 1em;
+        width: 100%;
+    }
+
+    button {
+        display: block;
+        margin: auto;
+    }
+}
+
 #viewport {
     position: absolute;
     top: 0;
@@ -37,7 +68,32 @@ html, body, #wrap-outer {
     // background: #fff;
     padding: 1em;
 
-    .btn-group {
+    .edit-type {
+        display: none;
+        position: absolute;
+        left: 1em;
+        bottom: 200px;
+        background: #fff;
+        width: 16.7em;
+        padding: 1em;
+        @include border-radius( 3px );
+        @include transform( translateZ(0) );
+
+        label {
+            display: block;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 1em;
+        }
+
+        .btn-group {
+            width: 19.5em;
+            font-size: 0.75em;
+            margin: auto;
+        }
+    }
+
+    .above {
         position: absolute;
         bottom: 60px;
         left: 1em;
@@ -65,8 +121,9 @@ html, body, #wrap-outer {
         .ctrl-download {
             display: none;
         }
-        .edit-group {
-            display: inline-block;
+        .edit-group,
+        .edit-type {
+            display: block;
         }
     }
 }
@@ -74,37 +131,59 @@ html, body, #wrap-outer {
 #ctx-menu {
     display: none;
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 14em;
+    bottom: 0;
+    right: 0;
+    width: 20em;
     background: #fff;
     padding: 1em;
     border: 1px solid $grey;
     z-index: 100;
     @include border-radius( 3px );
 
+    .title {
+        margin: 0;
+        padding: 0 0 1em;
+    }
+
     label {
+        clear: left;
         float: left;
-        width: 4em;
+        width: 7em;
+        margin-bottom: 0.5em;
         display: block;
         color: $deep-grey-dark;
         text-align: left;
     }
 
+    .ctrl-mass {
+        width: 4em;
+        float: left;
+    }
+
+    #ctrl-path {
+        float: left;
+        margin-top: 0.5em;
+    }
+
     .slider {
-        margin-left: 4em;
+        margin-left: 12em;
         margin-right: 0;
 
-        .handle:after {
-            content: attr(data-val);
-            position: absolute;
-            top: -1.5em;
-            width: 80px;
-            color: $grey-light;
-            margin-left: -29px;
-            text-align: center;
-            font-size: 14px;
-        }
+        // .handle:after {
+        //     content: attr(data-val);
+        //     position: absolute;
+        //     top: -1.5em;
+        //     width: 80px;
+        //     color: $deep-grey-dark;
+        //     margin-left: -29px;
+        //     text-align: center;
+        //     font-size: 14px;
+        // }
+    }
+
+    .minicolors-theme-default .minicolors-swatch {
+        top: 0.2em;
+        left: 0.2em;
     }
 
     .ctrl-close {

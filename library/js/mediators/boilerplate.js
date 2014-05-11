@@ -106,14 +106,14 @@ define([
         var startevent = window.Modernizr.touch ? 'touchstart' : 'mousedown';
         var moveevent = window.Modernizr.touch ? 'touchmove' : 'mousemove';
         var endevent = window.Modernizr.touch ? 'touchend' : 'mouseup';
-        var options = $.extend({
-            min: 0
-            ,max: 1
-            ,value: 0.5
-        }, opts);
 
         return $(this).each(function(){
             var $this = $(this).addClass('slider')
+                ,options = $.extend({
+                    min: parseFloat($this.attr('data-min')) || 0
+                    ,max: parseFloat($this.attr('data-max')) || 1
+                    ,value: parseFloat($this.attr('data-value')) || 0.5
+                }, opts)
                 ,factor = options.max - options.min
                 ,val = (options.value - options.min) / factor
                 ,$handle = $('<div>').appendTo($this).addClass('handle')
@@ -175,20 +175,25 @@ define([
 
             }, 20);
 
+            function end(){
+                dragging = false;
+                $(document).off(moveevent, drag);
+            }
+
             $this.on(startevent, function( e ){
                 dragging = true;
                 drag( e );
+
+                $(document).on(moveevent, drag);
             });
-            $this.on(moveevent, drag);
-            $this.on(endevent, function(){
-                dragging = false;
-            });
+            $(document).on(endevent, end);
 
             $this.on('mousedown', function(){
                 return false;
             });
 
             $this.on('refresh', function( e, v ){
+                v = Math.min(Math.max(v, options.min), options.max);
                 val = (v - options.min) / factor;
                 set();
             });
@@ -480,6 +485,7 @@ define([
                 b.path = data[i].path;
             }
 
+            this.reset();
             return true;
         }
     };
@@ -558,6 +564,14 @@ define([
 
                         self.emit(self.edit ? 'edit' : 'start');
                     })
+                    .on('touch', '.ctrl-add', function( e ){
+                        e.preventDefault();
+                        self.emit('add');
+                    })
+                    .on('touch', '.ctrl-share', function( e ){
+                        e.preventDefault();
+                        self.emit('share');
+                    })
                     .on('touch', '.ctrl-remove', function( e ){
                         e.preventDefault();
                         self.emit('remove');
@@ -566,12 +580,13 @@ define([
                         e.preventDefault();
                         self.emit('randomize');
                     })
-                    .on('touch', '.ctrl-edit-velocities', function( e ){
+                    .on('touch', '.ctrl-edit-velocities, .ctrl-edit-positions', function( e ){
                         e.preventDefault();
                         var on = ctrls.toggleClass('state-edit-velocities').is('.state-edit-velocities');
-                        $(this).html( on ? 'Edit Initial Positions' : 'Edit Initial Velocities' );
+                        $(this).parent().children().toggleClass('on')
                         self.editVelocities = on;
                         self.contextualMenu( null );
+                        self.emit('edit-velocities', on);
                     })
                     ;
 
@@ -715,6 +730,9 @@ define([
                     center = Physics.vector( viewWidth, viewHeight ).mult( 0.5 );
                     renderer.layer('main').options.offset = center;
                 }
+                ,'edit-velocities': function( e, on ){
+                    renderer.layer('vectors').el.style.zIndex = on ? 3 : 1;
+                }
                 ,randomize: function( e ){
                     pendulum.randomize( viewHeight / 6 );
                     pendulum.reset();
@@ -722,6 +740,22 @@ define([
                     Draw.clear( renderer.layer('paths').hdctx );
                     tracker.applyTo( pendulum.bodies );
                     self.emit('modified');
+                }
+                ,add: function(){
+                    var lastArm = Physics.vector();
+                    var dir = Physics.vector();
+                    var end = pendulum.bodies[ pendulum.bodies.length - 1 ].state.pos;
+                    lastArm.clone( end ).vsub( pendulum.bodies[ pendulum.bodies.length - 2 ].state.pos );
+                    dir.clone( pendulum.center.state.pos ).vsub( end );
+                    dir.rotate( Math.PI * Math.random() / 4 );
+                    dir.normalize().mult( 40 + 30 * Math.random() );
+
+                    if ( lastArm.angle( dir ) < Math.PI/8 ){
+                        dir.rotate( Math.PI/6 );
+                    }
+
+                    self.contextualMenu( null );
+                    self.emit('create', dir.vadd( end ));
                 }
                 ,create: function( e, pos ){
                     if ( !self.selectedBody && !self.editVelocities ){
@@ -881,18 +915,17 @@ define([
             pathRenderer.hdel.width = viewWidth * 2;
             pathRenderer.hdel.height = viewHeight * 2;
             pathRenderer.hdctx = pathRenderer.hdel.getContext('2d');
+            pathRenderer.hdctx.translate( pathRenderer.hdel.width/4 - center.x, pathRenderer.hdel.height/4 - center.y );
+            pathRenderer.hdctx.scale( 2, 2 );
+            pathRenderer.ctx.globalCompositeOperation = 'color-dodge';
+            pathRenderer.hdctx.globalCompositeOperation = 'color-dodge';
+
             pathRenderer.render = function(){
                 var b, p, grad, c, oldc, j, ll, path = [];
 
                 Draw( this.ctx )
                     .offset( center.x, center.y )
                     ;
-
-                this.ctx.globalCompositeOperation = 'color-dodge';
-                this.hdctx.globalCompositeOperation = 'color-dodge';
-                this.hdctx.save();
-                this.hdctx.translate( this.hdel.width/4 - center.x, this.hdel.height/4 - center.y );
-                this.hdctx.scale( 2, 2 );
 
                 for ( var i = 0, l = pendulum.bodies.length; i < l; i++ ){
                     b = pendulum.bodies[i];
@@ -904,9 +937,9 @@ define([
 
                         oldc = b.oldColor;
                         c = b.colorScale( b.state.vel.norm() );
-                        grad = this.ctx.createLinearGradient( p[0], p[1], p[ll-2], p[ll-1] );
-                        grad.addColorStop( 0, oldc || c );
-                        grad.addColorStop( 1, c );
+                        // grad = this.ctx.createLinearGradient( p[0], p[1], p[ll-2], p[ll-1] );
+                        // grad.addColorStop( 0, oldc || c );
+                        // grad.addColorStop( 1, c );
                         pathStyles.strokeStyle = grad || c;
                         // pathStyles.shadowColor = c;
 
@@ -938,8 +971,6 @@ define([
                         p.length = 0;
                     }
                 }
-
-                this.hdctx.restore();
             };
 
             renderer.addLayer('vectors', null, { zIndex: 1, offset: center }).render = function(){
@@ -1016,29 +1047,30 @@ define([
                 return;
             }
 
-            var x = body.state.pos.x + self.width / 2 + 10
-                ,y = body.state.pos.y + self.height / 2 + 20
-                ;
-
-            if ( x > (self.width - el.outerWidth()) ){
-                x -= (x + el.outerWidth() - self.width + 20);
-            }
-            if ( y > (self.height - el.outerHeight()) ){
-                y -= el.outerHeight() + 20;
-            }
+            // var x = body.state.pos.x + self.width / 2 + 10
+            //     ,y = body.state.pos.y + self.height / 2 + 20
+            //     ;
+            //
+            // if ( x > (self.width - el.outerWidth()) ){
+            //     x -= (x + el.outerWidth() - self.width + 20);
+            // }
+            // if ( y > (self.height - el.outerHeight()) ){
+            //     y -= el.outerHeight() + 20;
+            // }
 
             body.oldView = body.view;
             body.view = self.selectedView;
             self.selectedBody = body;
 
-            el.data('body', body).show().css({
-                top: y
-                ,left: x
-            });
+            el.data('body', body).show();
+            // .css({
+            //     top: y
+            //     ,left: x
+            // });
 
             el.find('#ctrl-mass').trigger('refresh', body.mass);
             el.find('#ctrl-color').minicolors( 'value', body.color() );
-            el.find('#ctrl-path').toggleClass( 'on', body.path );
+            el.find('#ctrl-path').prop( 'checked', body.path );
         }
 
         // DomReady Callback
@@ -1048,16 +1080,18 @@ define([
             self.width = window.innerWidth;
             self.height = window.innerHeight;
             self.$ctxMenu = $('#ctx-menu');
-            var massLabel;
-            $('#ctrl-mass').slider({ min: 0.1, max: 100, val: 1 }).on('change', function( e, val ){
+            var massLabel = $('input.ctrl-mass');
+            var massSlider = $('#ctrl-mass').slider({ min: 0.1, max: 100, val: 1 }).on('change', function( e, val ){
                 var b = self.$ctxMenu.data('body');
-                massLabel.attr( 'data-val', val.toFixed(2) );
+                massLabel.val( val.toFixed(2) );
                 if ( b ){
                     b.mass = val;
                 }
                 self.emit('modified');
             });
-            massLabel = $('#ctrl-mass .handle');
+            massLabel.on('change', function(){
+                massSlider.trigger('refresh', parseFloat( massLabel.val() ));
+            });
 
             $('input.color').on('touchstart', function( e ){
                 e.preventDefault();
@@ -1074,11 +1108,10 @@ define([
                 }
             });
 
-            $('#ctrl-path').hammer().on('touch', function( e ){
+            $('#ctrl-path').on('change', function( e ){
                 var b = self.$ctxMenu.data('body');
-                $(this).toggleClass('on');
                 if ( b ){
-                    b.path = !!$(this).hasClass('on');
+                    b.path = $(this).is(':checked');
                 }
                 self.emit('modified');
             });
@@ -1088,8 +1121,46 @@ define([
                 self.contextualMenu( null );
             });
 
+            var url;
+            self.on('modified', function(){
+                url = false;
+            });
+            self.on('share', function(){
 
-            self.world = Physics( { timestep: 2 }, self.initPhysics.bind( self ) );
+                var ov = $('#shareOverlay');
+                if ( url ){
+                    ov.fadeIn(function(){
+                        ov.find('input').val( url ).focus().select();
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: 'https://www.googleapis.com/urlshortener/v1/url'
+                    ,contentType: "application/json; charset=utf-8"
+                    ,type: 'post'
+                    ,dataType: "json"
+                    ,data: '{"longUrl": "'+window.location.href+'"}'
+                }).then(function( data ){
+                    url = data.id;
+                    ov.fadeIn(function(){
+                        ov.find('input').val( data.id ).focus().select();
+                    });
+                });
+            });
+
+            $(document).hammer().on('tap', '#shareOverlay .ctrl-close', function(){
+                var ov = $('#shareOverlay').fadeOut();
+            }).on('tap', function( e ){
+                var ov = $('#shareOverlay');
+
+                if (!ov.has(e.target).length && !ov.is(':animated') && e.target !== ov[0]){
+                    ov.fadeOut();
+                }
+            });
+
+
+            self.world = Physics( { timestep: 4 }, self.initPhysics.bind( self ) );
         }
 
     }, ['events']);
