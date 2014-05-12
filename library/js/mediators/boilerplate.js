@@ -196,9 +196,9 @@ define([
     };
 
     var pendulumStyles = {
-            lineWidth: 3
-            ,strokeStyle: colors.greyDark
-            ,fillStyle: colors.greyDark
+            lineWidth: 2
+            ,strokeStyle: colors.deepGreyLight
+            ,fillStyle: colors.deepGreyLight
             ,shadowBlur: 1
         }
         ,vectorStyles = {
@@ -270,7 +270,24 @@ define([
     });
 
     Physics.body.mixin({
-        'color': function( hex ){
+        'refreshView': function(){
+            var th = 2
+            var r = (2*Math.log(this.mass+1) + 1 + th);
+            Draw('hidden', r * 2, r * 2)
+                .offset(0, 0)
+                .styles({
+                    fillStyle: this.path ? this.color() : colors.greyDark
+                    ,lineWidth: th
+                    ,strokeStyle: colors.greyDark
+                })
+                .circle( r, r, r - th )
+                .fill()
+                ;
+
+            this.view = new Image();
+            this.view.src = Draw.ctx.canvas.toDataURL('image/png');
+        }
+        ,'color': function( hex ){
             if ( !hex ){
                 return this._color;
             }
@@ -324,8 +341,6 @@ define([
 
             this.colors = [ '#fff', colors.blueFire, colors.red, colors.yellow, colors.green, colors.grey, colors.blue ];
 
-            this.view = world.renderer().createView( this.center.geometry, pendulumStyles );
-
             this.constraints = Physics.behavior('verlet-constraints', {
                 iterations: 2
             });
@@ -342,13 +357,13 @@ define([
                 x: x
                 ,y: y
                 ,radius: 15
-                ,view: this.view
                 ,initial: v
                 ,path: (l !== 1)
                 ,maxSpeed: 1
             });
 
             b.color( this.colors[ l - 1 ] || defaultPathColor );
+            b.refreshView();
             this.bodies.push( b );
             this.world.add( b );
             this.constraints.distanceConstraint( this.bodies[ l - 1 ], b, 1 );
@@ -390,7 +405,7 @@ define([
                 // set the max anticipated speed based on energy calculation
                 h += last.state.pos.dist( b.state.pos );
                 b.maxSpeed = Math.sqrt(2 * E / b.mass);
-                b.view = this.world.renderer().createView( Physics.geometry('circle', { radius: 2 * Math.log(b.mass+1) }), pendulumStyles);
+                b.refreshView();
                 last = b;
             }
             return this;
@@ -706,8 +721,6 @@ define([
 
             // pendulum
             var pendulum = self.pendulum = new Pendulum( world, 0, 0, g );
-
-            self.selectedView = renderer.createView( pendulum.center.geometry, selectedStyles );
 
             self.on({
                 resize: function() {
@@ -1062,7 +1075,6 @@ define([
             // }
 
             body.oldView = body.view;
-            body.view = self.selectedView;
             self.selectedBody = body;
 
             el.data('body', body).show();
@@ -1089,6 +1101,7 @@ define([
                 massLabel.val( val.toFixed(2) );
                 if ( b ){
                     b.mass = val;
+                    b.refreshView();
                 }
                 self.emit('modified');
             });
@@ -1106,6 +1119,7 @@ define([
                     var b = self.$ctxMenu.data('body');
                     if ( b ){
                         b.color(hex);
+                        b.refreshView();
                     }
                     self.emit('modified');
                 }
@@ -1115,6 +1129,7 @@ define([
                 var b = self.$ctxMenu.data('body');
                 if ( b ){
                     b.path = $(this).is(':checked');
+                    b.refreshView();
                 }
                 self.emit('modified');
             });

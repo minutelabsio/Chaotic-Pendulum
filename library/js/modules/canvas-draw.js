@@ -3,6 +3,8 @@ define(function(){
     var Pi2 = 2 * Math.PI;
     var context;
     var sqrt2 = Math.sqrt(2);
+    var hiddenCanvas = document.createElement('canvas');
+    var hiddenCtx = hiddenCanvas.getContext('2d');
 
     var imgCache = {};
     function getImage( src, cb ){
@@ -16,9 +18,18 @@ define(function(){
         return imgCache[ src ];
     }
 
-    var Draw = function( ctx ){
+    var Draw = function( ctx, width, height ){
+
+        if ( ctx === 'hidden' ){
+            ctx = hiddenCtx;
+        }
 
         Draw.ctx = ctx;
+
+        if ( width !== undefined ){
+            Draw.ctx.canvas.width = width;
+            Draw.ctx.canvas.height = height;
+        }
         return Draw;
     };
 
