@@ -209,7 +209,7 @@ define([
         ,pathStyles = {
             lineWidth: 3
             ,lineCap: 'butt'
-            // ,shadowBlur: 4
+            ,shadowBlur: 1
         }
         ,selectedStyles = {
             lineWidth: 3
@@ -294,12 +294,11 @@ define([
         var s = chroma.scale([ c.alpha(0.1), body._color ]).mode('lab').out('css');
 
         return function( v ){
-            v /= (0.7 * body.maxSpeed);
+            v /= (0.5 * body.maxSpeed);
             v = Math.min(1, Math.max( 0 , v ));
             // v = (Math.exp( v ) - 1)/(Math.E - 1);
             var val = lerp(1, 0.1, v);
             return s( val );
-            // return c.alpha( val ).css();
         }
     }
 
@@ -916,6 +915,10 @@ define([
             pathRenderer.render = function(){
                 var b, p, grad, c, oldc, j, ll, path = [];
 
+                if ( self.edit ){
+                    return;
+                }
+
                 Draw( this.ctx )
                     .offset( center.x, center.y )
                     ;
@@ -937,7 +940,7 @@ define([
                         // grad.addColorStop( 0, oldc || c );
                         // grad.addColorStop( 1, c );
                         pathStyles.strokeStyle = grad || c;
-                        // pathStyles.shadowColor = c;
+                        pathStyles.shadowColor = c;
 
                         Draw( this.ctx )
                             .styles( pathStyles )
@@ -950,19 +953,23 @@ define([
                         b.oldColor = c;
 
                         Draw( this.ctx )
-                            .lines( p )
+                            // .lines( p )
+                            .continuousPath( p )
                             ;
 
                         // draw to HD canvas
                         Draw( this.hdctx )
-                            .lines( p )
+                            // .lines( p )
+                            .continuousPath( p )
                             ;
                     }
 
                     if ( p[ ll-1 ] ){
-                        p[0] = p[ll-2];
-                        p[1] = p[ll-1];
-                        p.length = 2;
+                        p[0] = p[ll-4];
+                        p[1] = p[ll-3];
+                        p[2] = p[ll-2];
+                        p[3] = p[ll-1];
+                        p.length = 4;
                     } else {
                         p.length = 0;
                     }
