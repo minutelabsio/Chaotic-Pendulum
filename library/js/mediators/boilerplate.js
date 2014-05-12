@@ -21,14 +21,7 @@ define([
     chroma,
     Draw,
 
-    Physics,
-    _pjsc,
-    _pjsca,
-    _pjsvc,
-    _pjsat,
-    _pjsin,
-    _pjscir,
-    _raf
+    Physics
 ) {
     'use strict';
 
@@ -225,6 +218,7 @@ define([
         }
         ,selectedOutline = {
             lineWidth: 1
+            ,lineDash: [3.14]
             ,strokeStyle: colors.greyLight
         }
         ,defaultPathColor = '#b9770b'
@@ -297,13 +291,15 @@ define([
 
     function getColorScale( body ){
         var c = chroma( body._color );
+        var s = chroma.scale([ c.alpha(0.1), body._color ]).mode('lab').out('css');
 
         return function( v ){
-            v /= (0.8 * body.maxSpeed);
+            v /= (0.7 * body.maxSpeed);
             v = Math.min(1, Math.max( 0 , v ));
             // v = (Math.exp( v ) - 1)/(Math.E - 1);
             var val = lerp(1, 0.1, v);
-            return c.alpha( val ).css();
+            return s( val );
+            // return c.alpha( val ).css();
         }
     }
 
@@ -539,7 +535,7 @@ define([
                 ctrls.hammer()
                     .on('touch', '.ctrl-download', function( e ){
                         var img = self.getImage();
-                        this.href = img;
+                        $(this).attr('href', img);
                         this.download = 'minutelabs-chaotic-pendulum.png';
                     })
                     .on('touch', '.ctrl-pause', function( e ){
@@ -902,12 +898,10 @@ define([
 
                 if ( self.selectedBody ){
                     b = self.selectedBody;
-                    this.ctx.setLineDash( [3.14] );
                     Draw( this.ctx )
                         .styles( selectedOutline )
                         .circle( b.state.pos.x, b.state.pos.y, b.geometry.radius )
                         ;
-                    this.ctx.setLineDash( [] );
                 }
             };
 
@@ -918,8 +912,6 @@ define([
             pathRenderer.hdctx = pathRenderer.hdel.getContext('2d');
             pathRenderer.hdctx.translate( pathRenderer.hdel.width/4 - center.x, pathRenderer.hdel.height/4 - center.y );
             pathRenderer.hdctx.scale( 2, 2 );
-            pathRenderer.ctx.globalCompositeOperation = 'color-dodge';
-            pathRenderer.hdctx.globalCompositeOperation = 'color-dodge';
 
             pathRenderer.render = function(){
                 var b, p, grad, c, oldc, j, ll, path = [];
@@ -927,6 +919,9 @@ define([
                 Draw( this.ctx )
                     .offset( center.x, center.y )
                     ;
+
+                pathRenderer.ctx.globalCompositeOperation = 'color-dodge';
+                pathRenderer.hdctx.globalCompositeOperation = 'color-dodge';
 
                 for ( var i = 0, l = pendulum.bodies.length; i < l; i++ ){
                     b = pendulum.bodies[i];
