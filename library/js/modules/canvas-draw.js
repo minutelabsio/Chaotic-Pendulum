@@ -224,6 +224,51 @@ define(function(){
         return Draw;
     };
 
+    // only draws half of the first and last line so the line joins are nice and smooth
+    Draw.continuousPath = function( points, ctx ){
+        ctx = ctx || Draw.ctx;
+
+        var i
+            ,prev
+            ,p = points[ 0 ]
+            ,l = points.length
+            ,ox = Draw.offset.x
+            ,oy = Draw.offset.y
+            ;
+
+        ctx.beginPath();
+
+        if ( typeof p === 'number' ){
+            p = points;
+            // start at midpoint between first and second dot
+            ctx.moveTo( (p[0] + p[ 2 ]) * 0.5 + ox, (p[1] + p[3]) * 0.5 + oy );
+            for ( i = 2; i < l-3; i+=2 ){
+                ctx.lineTo( p[i] + ox, p[i+1] + oy );
+            }
+
+            // draw half the last line
+            ctx.lineTo( (p[ i - 2 ] + p[ i ]) * 0.5 + ox, (p[ i - 1 ] + p[ i + 1 ]) * 0.5 + oy );
+
+        } else if ( p.length <= 2 ){
+            // start at midpoint between first and second dot
+            prev = p;
+            p = points[ 1 ];
+            ctx.moveTo( (prev[0] + p[0]) * 0.5 + ox, (prev[1] + p[1]) * 0.5 + oy );
+            for (i = 1; i < l-2; i++ ){
+                p = points[ i ];
+                ctx.lineTo( p[0] + ox, p[1] + oy );
+            }
+
+            prev = p;
+            p = points[ i ];
+            ctx.moveTo( (prev[0] + p[0]) * 0.5 + ox, (prev[1] + p[1]) * 0.5 + oy );
+        }
+
+        ctx.stroke();
+
+        return Draw;
+    };
+
     Draw.quadratic = function( x1, y1, x2, y2, cx, cy, ctx ){
 
         var ox = Draw.offset.x
