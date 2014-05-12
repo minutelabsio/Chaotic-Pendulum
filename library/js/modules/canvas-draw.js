@@ -79,13 +79,26 @@ define(function(){
             ctx[ prop ] = defs[ prop ];
         }
 
+        if ( ctx.setLineDash ){
+            ctx.setLineDash( styles.lineDash || [] );
+        }
+
         if ( str ){
 
-            ctx[ styles ] = val;
+            if ( styles === 'lineDash' ){
+                if ( ctx.setLineDash ){
+                    ctx.setLineDash( val );
+                }
+            } else {
+                ctx[ styles ] = val;
+            }
 
         } else {
+
             for ( prop in styles ){
-                ctx[ prop ] = styles[ prop ];
+                if ( prop !== 'lineDash' ){
+                    ctx[ prop ] = styles[ prop ];
+                }
             }
         }
 
