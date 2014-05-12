@@ -593,18 +593,23 @@ define([
                     })
                     .on('touch', '.ctrl-edit-velocities, .ctrl-edit-positions', function( e ){
                         e.preventDefault();
-                        var on = ctrls.toggleClass('state-edit-velocities').is('.state-edit-velocities');
-                        $(this).parent().children().toggleClass('on')
-                        self.editVelocities = on;
-                        self.contextualMenu( null );
+                        var on = !self.editVelocities;
                         self.emit('edit-velocities', on);
                     })
                     ;
 
+                self.on('edit-velocities', function( e, on ){
+                    ctrls.toggleClass('state-edit-velocities', on);
+                    ctrls.find('.ctrl-edit-velocities').toggleClass('on', on);
+                    ctrls.find('.ctrl-edit-positions').toggleClass('on', !on);
+                    self.editVelocities = on;
+                    self.contextualMenu( null );
+                });
+
                 var body;
 
                 $('#viewport').hammer()
-                    .on('touchstart', function( e ){
+                    .on('touchstart', 'canvas', function( e ){
                         e.preventDefault();
                     })
                     .on('touch', 'canvas', function( e ){
@@ -614,6 +619,11 @@ define([
                         if ( self.edit ){
 
                             body = self.world.findOne({ $at: pos });
+
+                            if ( body ){
+                                self.emit('select', body);
+                                return;
+                            }
 
                             if ( !body ){
                                 pos = Physics.vector( pos );
@@ -633,17 +643,12 @@ define([
 
                                 self.emit( 'create', pos );
                             }
+
+                            self.emit('select', null);
                         }
                     })
                     .on('release', 'canvas', function( e ){
-                        var pos = e.gesture.center;
-                        pos = { x: pos.pageX - self.width / 2, y: pos.pageY - self.height/2 };
                         e.preventDefault();
-                        if ( self.edit ){
-
-                            body = self.world.findOne({ $at: pos });
-                            self.emit('select', body);
-                        }
                         body = false;
                         self.emit('release', e.gesture);
                     })
@@ -765,6 +770,7 @@ define([
 
                     self.contextualMenu( null );
                     self.emit('create', dir.vadd( end ));
+                    self.emit('release', dir);
                 }
                 ,create: function( e, pos ){
                     if ( !self.selectedBody && !self.editVelocities ){
@@ -839,6 +845,7 @@ define([
                     }
                 }
                 ,edit: function(){
+                    self.emit('edit-velocities', false);
                     self.emit('pause');
                     setTimeout(function(){
                         world._meta.interpolateTime = 0;
