@@ -218,7 +218,7 @@ define([
         ,pathStyles = {
             lineWidth: 3
             ,lineCap: 'butt'
-            ,shadowBlur: 0.5
+            ,shadowBlur: 1
         }
         ,selectedStyles = {
             lineWidth: 3
