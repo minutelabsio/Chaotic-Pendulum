@@ -68,6 +68,15 @@ define([
 
     };
 
+    function debugColor(){
+        var i = debugColor.i|0;
+        i++;
+        debugColor.i = i;
+        return debugColor.colors[ i % 6 ];
+    }
+
+    debugColor.colors = ['red', 'green', 'blue', 'cyan', 'magenta', 'yellow'];
+
     function throttle( fn, delay, scope ){
         var to
             ,call = false
@@ -196,9 +205,9 @@ define([
     };
 
     var pendulumStyles = {
-            lineWidth: 3
-            ,strokeStyle: colors.greyDark
-            ,fillStyle: colors.greyDark
+            lineWidth: 2
+            ,strokeStyle: colors.deepGreyLight
+            ,fillStyle: colors.deepGreyLight
             ,shadowBlur: 1
         }
         ,vectorStyles = {
@@ -209,7 +218,7 @@ define([
         ,pathStyles = {
             lineWidth: 3
             ,lineCap: 'butt'
-            ,shadowBlur: 1
+            ,shadowBlur: 0.5
         }
         ,selectedStyles = {
             lineWidth: 3
@@ -270,7 +279,24 @@ define([
     });
 
     Physics.body.mixin({
-        'color': function( hex ){
+        'refreshView': function(){
+            var th = 2
+            var r = (2*Math.log(this.mass+1) + 1 + th);
+            Draw('hidden', r * 2, r * 2)
+                .offset(0, 0)
+                .styles({
+                    fillStyle: this.path ? this.color() : colors.greyDark
+                    ,lineWidth: th
+                    ,strokeStyle: colors.greyDark
+                })
+                .circle( r, r, r - th )
+                .fill()
+                ;
+
+            this.view = new Image();
+            this.view.src = Draw.ctx.canvas.toDataURL('image/png');
+        }
+        ,'color': function( hex ){
             if ( !hex ){
                 return this._color;
             }
@@ -324,8 +350,6 @@ define([
 
             this.colors = [ '#fff', colors.blueFire, colors.red, colors.yellow, colors.green, colors.grey, colors.blue ];
 
-            this.view = world.renderer().createView( this.center.geometry, pendulumStyles );
-
             this.constraints = Physics.behavior('verlet-constraints', {
                 iterations: 2
             });
@@ -342,13 +366,13 @@ define([
                 x: x
                 ,y: y
                 ,radius: 15
-                ,view: this.view
                 ,initial: v
                 ,path: (l !== 1)
                 ,maxSpeed: 1
             });
 
             b.color( this.colors[ l - 1 ] || defaultPathColor );
+            b.refreshView();
             this.bodies.push( b );
             this.world.add( b );
             this.constraints.distanceConstraint( this.bodies[ l - 1 ], b, 1 );
@@ -390,7 +414,7 @@ define([
                 // set the max anticipated speed based on energy calculation
                 h += last.state.pos.dist( b.state.pos );
                 b.maxSpeed = Math.sqrt(2 * E / b.mass);
-                b.view = this.world.renderer().createView( Physics.geometry('circle', { radius: 2 * Math.log(b.mass+1) }), pendulumStyles);
+                b.refreshView();
                 last = b;
             }
             return this;
@@ -578,18 +602,23 @@ define([
                     })
                     .on('touch', '.ctrl-edit-velocities, .ctrl-edit-positions', function( e ){
                         e.preventDefault();
-                        var on = ctrls.toggleClass('state-edit-velocities').is('.state-edit-velocities');
-                        $(this).parent().children().toggleClass('on')
-                        self.editVelocities = on;
-                        self.contextualMenu( null );
+                        var on = !self.editVelocities;
                         self.emit('edit-velocities', on);
                     })
                     ;
 
+                self.on('edit-velocities', function( e, on ){
+                    ctrls.toggleClass('state-edit-velocities', on);
+                    ctrls.find('.ctrl-edit-velocities').toggleClass('on', on);
+                    ctrls.find('.ctrl-edit-positions').toggleClass('on', !on);
+                    self.editVelocities = on;
+                    self.contextualMenu( null );
+                });
+
                 var body;
 
                 $('#viewport').hammer()
-                    .on('touchstart', function( e ){
+                    .on('touchstart', 'canvas', function( e ){
                         e.preventDefault();
                     })
                     .on('touch', 'canvas', function( e ){
@@ -599,6 +628,11 @@ define([
                         if ( self.edit ){
 
                             body = self.world.findOne({ $at: pos });
+
+                            if ( body ){
+                                self.emit('select', body);
+                                return;
+                            }
 
                             if ( !body ){
                                 pos = Physics.vector( pos );
@@ -618,17 +652,12 @@ define([
 
                                 self.emit( 'create', pos );
                             }
+
+                            self.emit('select', null);
                         }
                     })
                     .on('release', 'canvas', function( e ){
-                        var pos = e.gesture.center;
-                        pos = { x: pos.pageX - self.width / 2, y: pos.pageY - self.height/2 };
                         e.preventDefault();
-                        if ( self.edit ){
-
-                            body = self.world.findOne({ $at: pos });
-                            self.emit('select', body);
-                        }
                         body = false;
                         self.emit('release', e.gesture);
                     })
@@ -707,8 +736,6 @@ define([
             // pendulum
             var pendulum = self.pendulum = new Pendulum( world, 0, 0, g );
 
-            self.selectedView = renderer.createView( pendulum.center.geometry, selectedStyles );
-
             self.on({
                 resize: function() {
 
@@ -752,6 +779,7 @@ define([
 
                     self.contextualMenu( null );
                     self.emit('create', dir.vadd( end ));
+                    self.emit('release', dir);
                 }
                 ,create: function( e, pos ){
                     if ( !self.selectedBody && !self.editVelocities ){
@@ -826,6 +854,7 @@ define([
                     }
                 }
                 ,edit: function(){
+                    self.emit('edit-velocities', false);
                     self.emit('pause');
                     setTimeout(function(){
                         world._meta.interpolateTime = 0;
@@ -936,6 +965,7 @@ define([
 
                         oldc = b.oldColor;
                         c = b.colorScale( b.state.vel.norm() );
+                        // c = 'rgb(222,20,0)';//debugColor();
                         // grad = this.ctx.createLinearGradient( p[0], p[1], p[ll-2], p[ll-1] );
                         // grad.addColorStop( 0, oldc || c );
                         // grad.addColorStop( 1, c );
@@ -1062,7 +1092,6 @@ define([
             // }
 
             body.oldView = body.view;
-            body.view = self.selectedView;
             self.selectedBody = body;
 
             el.data('body', body).show();
@@ -1089,6 +1118,7 @@ define([
                 massLabel.val( val.toFixed(2) );
                 if ( b ){
                     b.mass = val;
+                    b.refreshView();
                 }
                 self.emit('modified');
             });
@@ -1106,6 +1136,7 @@ define([
                     var b = self.$ctxMenu.data('body');
                     if ( b ){
                         b.color(hex);
+                        b.refreshView();
                     }
                     self.emit('modified');
                 }
@@ -1115,6 +1146,7 @@ define([
                 var b = self.$ctxMenu.data('body');
                 if ( b ){
                     b.path = $(this).is(':checked');
+                    b.refreshView();
                 }
                 self.emit('modified');
             });
