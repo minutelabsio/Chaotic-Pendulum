@@ -853,6 +853,40 @@ define([
                             });
                             self.$ctxMenu.hide();
                         }
+                    } else if ( body === pendulum.center ){
+
+                        // move the center (and all others relative to center)
+                        vis = self.$ctxMenu.is(':visible');
+                        orig = body.state.pos.clone();
+                        var delta = Physics.vector();
+                        drag = function( e, g ){
+                            var b;
+                            body.state.pos.set( g.deltaX, g.deltaY ).vadd( orig );
+                            delta.clone( body.state.pos ).vsub( orig );
+                            for ( var i = 1, l = pendulum.bodies.length; i < l; i++ ){
+                                b = pendulum.bodies[ i ];
+                                b.state.pos.clone( b.initial ).vadd( delta );
+                            }
+                            pendulum.resetConstraints();
+                        };
+
+                        self.on('drag', drag);
+                        self.on('release', function( e ){
+                            var b;
+                            for ( var i = 1, l = pendulum.bodies.length; i < l; i++ ){
+                                b = pendulum.bodies[ i ];
+                                b.initial.x = b.state.pos.x;
+                                b.initial.y = b.state.pos.y;
+                            }
+
+                            self.off(e.topic, e.handler);
+                            self.off('drag', drag);
+                            if ( vis ){
+                                self.contextualMenu( body );
+                            }
+                            self.emit('modified');
+                        });
+                        self.$ctxMenu.hide();
                     }
                 }
                 ,'grab-velocity': function( e, body ){
