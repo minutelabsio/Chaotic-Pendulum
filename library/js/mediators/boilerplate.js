@@ -34,6 +34,14 @@ define([
         window.console.log( arg );
     }, 100);
 
+    function clearArray(arr){
+        var l = arr.length;
+        while( l-- ){
+            arr.pop();
+        }
+        return arr;
+    }
+
     var colors = {
         'grey': 'rgb(220, 220, 220)'
         ,'greyLight': 'rgb(237, 237, 237)'
@@ -995,13 +1003,9 @@ define([
                     }
 
                     if ( p[ ll-1 ] ){
-                        p[0] = p[ll-4];
-                        p[1] = p[ll-3];
-                        p[2] = p[ll-2];
-                        p[3] = p[ll-1];
-                        p.length = 4;
+                        b.positionBuffer = [p[ll-4], p[ll-3], p[ll-2], p[ll-1]];
                     } else {
-                        p.length = 0;
+                        clearArray( p );
                     }
                 }
             };
