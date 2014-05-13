@@ -1185,6 +1185,10 @@ define([
             });
             massLabel.on('change', function(){
                 massSlider.trigger('refresh', parseFloat( massLabel.val() ));
+            })
+
+            $('input[type="text"]').on('blur', function(){
+                $(document).scrollTop(0);
             });
 
             $('input.color').on('touchstart', function( e ){
