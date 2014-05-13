@@ -1187,10 +1187,8 @@ define([
                 massSlider.trigger('refresh', parseFloat( massLabel.val() ));
             })
 
-            $('input[type="text"]').on('focus', function(e){
-                if ( window.Modernizr.touch ){
-                    e.preventDefault();
-                }
+            $('input[type="text"]').on('blur', function(){
+                $(document).scrollTop(0);
             });
 
             $('input.color').on('touchstart', function( e ){
