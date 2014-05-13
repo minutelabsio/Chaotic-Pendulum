@@ -328,7 +328,8 @@ define([
         var s = chroma.scale([ c.alpha(0.1), body._color ]).mode('lab').out('css');
 
         return function( v ){
-            v /= (0.5 * body.maxSpeed);
+            v /= (1 * body.maxSpeed);
+            v = v > 0.7 ? Math.log(v+1) + 0.17 : v;
             v = Math.min(1, Math.max( 0 , v ));
             // v = (Math.exp( v ) - 1)/(Math.E - 1);
             var val = lerp(1, 0.1, v);
@@ -412,20 +413,47 @@ define([
             return this;
         }
         ,reset: function(){
-            var v, b, E = this.calcEnergy(), last = this.center, h = 0;
+            var v, b, w = this.maxAngularVel(), r, last = this.center, h = 0;
+            last.maxSpeed = 0;
             for ( var i = 1, l = this.bodies.length; i < l; i++ ){
                 b = this.bodies[ i ];
                 v = b.initial;
                 b.state.pos.clone( v );
                 b.state.old.pos.clone( v );
                 b.state.vel.clone( v.vel );
-                // set the max anticipated speed based on energy calculation
-                h += last.state.pos.dist( b.state.pos );
-                b.maxSpeed = Math.sqrt(2 * E / b.mass);
+                // set the max anticipated speed based
+                r = last.state.pos.dist( b.state.pos );
+                h += r;
+                b.maxSpeed = w * r + (last.maxSpeed);
+                b.maxSpeed *= 1.3 * lerp(0.5, 1.4, Math.abs(last.mass - b.mass)/(last.mass + b.mass)) / i; // multiply by a fudge factor
                 b.refreshView();
                 last = b;
             }
             return this;
+        }
+        ,maxAngularVel: function(){
+            var w = 0
+                ,E
+                ,last = this.center
+                ,v
+                ,b
+                ,h = 0
+                ,g = this.g
+                ,scratch = Physics.scratchpad()
+                ,r = scratch.vector()
+                ,tmp = scratch.vector()
+                ;
+
+            for ( var i = 1, l = this.bodies.length; i < l; i++ ){
+                b = this.bodies[ i ];
+                v = b.initial;
+                h += r.clone(last.initial || last.state.pos).dist( tmp.clone( v ) );
+                E = (0.5 * tmp.clone(v.vel).normSq() + g * (h - (v.y - this.center.state.pos.y)));
+                w = Math.max( w, Math.sqrt(2*E) / h );
+                last = b;
+            }
+
+            return scratch.done( w );
         }
         ,calcEnergy: function(){
             var E = 0, last = this.center, v, b, h = 0, g = this.g;
@@ -438,8 +466,8 @@ define([
             }
 
             return E;
-        },
-        randomize: function( maxLen ){
+        }
+        ,randomize: function( maxLen ){
             maxLen = maxLen || 100;
             var n = ((4 * Math.random()) + 2) | 0;
             var dir = Physics.vector( 1, 0 );
@@ -459,9 +487,9 @@ define([
                 last.initial.vel.y = dir.y;
                 last.state.vel.clone( dir );
             }
-        },
+        }
 
-        hash: function( hash ){
+        ,hash: function( hash ){
             var data, i, l, b;
             if ( hash === undefined ){
                 data = [];
@@ -1074,10 +1102,6 @@ define([
                 ,oldBody = el.data('body')
                 ;
 
-            if ( oldBody ){
-                oldBody.view = oldBody.oldView || oldBody.view;
-            }
-
             if ( !body ){
                 el.data('body', null).hide();
                 self.selectedBody = null;
@@ -1095,7 +1119,6 @@ define([
             //     y -= el.outerHeight() + 20;
             // }
 
-            body.oldView = body.view;
             self.selectedBody = body;
 
             el.data('body', body).show();
