@@ -68,6 +68,15 @@ define([
 
     };
 
+    function debugColor(){
+        var i = debugColor.i|0;
+        i++;
+        debugColor.i = i;
+        return debugColor.colors[ i % 6 ];
+    }
+
+    debugColor.colors = ['red', 'green', 'blue', 'cyan', 'magenta', 'yellow'];
+
     function throttle( fn, delay, scope ){
         var to
             ,call = false
@@ -209,7 +218,7 @@ define([
         ,pathStyles = {
             lineWidth: 3
             ,lineCap: 'butt'
-            ,shadowBlur: 1
+            ,shadowBlur: 0.5
         }
         ,selectedStyles = {
             lineWidth: 3
@@ -956,6 +965,7 @@ define([
 
                         oldc = b.oldColor;
                         c = b.colorScale( b.state.vel.norm() );
+                        // c = 'rgb(222,20,0)';//debugColor();
                         // grad = this.ctx.createLinearGradient( p[0], p[1], p[ll-2], p[ll-1] );
                         // grad.addColorStop( 0, oldc || c );
                         // grad.addColorStop( 1, c );
