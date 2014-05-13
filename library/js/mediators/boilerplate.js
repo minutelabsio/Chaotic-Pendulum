@@ -594,7 +594,7 @@ define([
                 ctrls.hammer()
                     .on('touch', '.ctrl-download', function( e ){
                         var img = self.getImage();
-                        $(this).attr('href', img);
+                        $(this).attr('href', img).attr('target', '_blank');
                         this.download = 'minutelabs-chaotic-pendulum.png';
                     })
                     .on('touch', '.ctrl-pause', function( e ){
