@@ -1,0 +1,28 @@
+.slider {
+    margin: 10px 16px;
+    border: 1px solid $grey-dark;
+    height: 6px;
+    background: #fff;
+    z-index: 1;
+    cursor: pointer;
+
+    .handle {
+        background: $grey;
+        border: 1px solid $deep-grey-light;
+        width: 24px;
+        height: 24px;
+        z-index: 2;
+        @include box-sizing( border-box );
+        @include border-radius( 50% );
+
+        &:hover {
+            background: #fff;
+        }
+    }
+
+    .meter {
+        z-index: 1;
+        background: $blue;
+        border: 1px solid $blue;
+    }
+}
