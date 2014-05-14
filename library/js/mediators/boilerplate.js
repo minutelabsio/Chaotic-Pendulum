@@ -30,10 +30,6 @@ define([
 
     var vFactor = 200; // scale the velocity rendering
 
-    var log = throttle(function( arg ){
-        window.console.log( arg );
-    }, 100);
-
     function clearArray(arr){
         var l = arr.length;
         while( l-- ){
@@ -111,6 +107,10 @@ define([
             }
         };
     }
+
+    var log = throttle(function( arg ){
+        window.console.log( arg );
+    }, 100);
 
     $.fn.slider = function( opts ){
         var startevent = window.Modernizr.touch ? 'touchstart' : 'mousedown';
@@ -288,7 +288,7 @@ define([
 
     Physics.body.mixin({
         'refreshView': function(){
-            var th = 2
+            var th = 2;
             var r = (2*Math.log(this.mass+1) + 1 + th);
             Draw('hidden', r * 2, r * 2)
                 .offset(0, 0)
@@ -334,7 +334,7 @@ define([
             // v = (Math.exp( v ) - 1)/(Math.E - 1);
             var val = lerp(1, 0.1, v);
             return s( val );
-        }
+        };
     }
 
     function randomDir( v ){
@@ -586,10 +586,10 @@ define([
                         .html('Pause')
                         ;
                 }
-            })
+            });
 
             $(function(){
-                var ctrls = $('#controls')
+                var ctrls = $('#controls');
 
                 ctrls.hammer()
                     .on('touch', '.ctrl-download', function( e ){
@@ -730,7 +730,7 @@ define([
                     font: '40px "latin-modern-mono-light", Courier, monospace'
                 })
                 ;
-            ctx.fillText('MinuteLabs.io', 96 + 30, h - 96/2 + 10 )
+            ctx.fillText('MinuteLabs.io', 96 + 30, h - 96/2 + 10 );
 
             // for ( var i = 0, l = layers.length; i < l; ++i ){
             //
@@ -957,7 +957,7 @@ define([
             });
 
             if ( !pendulum.hash( window.location.hash ) ){
-                var first = pendulum.addVertex( 140, 0 )
+                var first = pendulum.addVertex( 140, 0 );
                 first.mass = 10;
                 first.state.vel.set( 0, 0.15 );
                 first.initial.vel.y = 0.15;
@@ -1185,7 +1185,7 @@ define([
             });
             massLabel.on('change', function(){
                 massSlider.trigger('refresh', parseFloat( massLabel.val() ));
-            })
+            });
 
             $('input[type="text"]').on('blur', function(){
                 $(document).scrollTop(0);

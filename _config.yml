@@ -2,16 +2,16 @@ permalink: /:year-:month-:day/:title
 markdown: rdiscount
 exclude: ["README.md", "CNAME", "LICENSE", "build", "config.rb", "Gruntfile.js", "package.json", "jshint.json"]
 
-title : "Chaotic Pendulum" # changeme
+title : "Chaotic Pendulum"
 id : "" # changeme
-description : "Short description" # changeme
-thumb: "http://minutelabs.io/assets/THUMB_IMAGE" # changem
+description : "Create your own beautiful chaos."
+thumb: "thumb.gif"
 version: "0.0.1"
 
 ml_url: "http://minutelabs.io"
 ml_library: "http://labs.minutelabs.io/library"
 ml_assets: "http://labs.minutelabs.io/assets"
-library_path: "library" # changeme
+library_path: "library-build"
 
 show :
   branding: true

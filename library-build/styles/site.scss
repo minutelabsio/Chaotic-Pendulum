@@ -1,0 +1,272 @@
+// site styles
+@import 'compass/css3';
+@import '_vars';
+@import '_slider';
+@import '_minicolors';
+
+html, body, #wrap-outer {
+    height: 100%;
+}
+
+.radio-group {
+    overflow: hidden;
+    // the radio buttons
+    > a {
+        position: relative;
+        text-decoration: none;
+        color: $deep-grey-dark;
+        display: block;
+        float: left;
+        height: 3em;
+
+        &:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 1.2em;
+            height: 1.2em;
+            margin-left: -0.65em;
+            border: 2px solid $blue-dark;
+            background: #fff;
+            @include border-radius( 50% );
+            @include box-sizing( border-box );
+        }
+
+        &.on:after {
+            background: $blue-dark;
+        }
+    }
+}
+
+#shareOverlay {
+    display: none;
+    background: #fff;
+    width: 400px;
+    padding: 1em;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    margin-left: -200px;
+    margin-top: -100px;
+    z-index: 100;
+    @include border-radius( 3px );
+
+    h3 {
+        font-size: 22px;
+        text-align: center;
+        margin: 1em 0;
+    }
+
+    input {
+        text-align: center;
+        display: block;
+        margin: 0 auto 1em;
+        width: 100%;
+    }
+
+    button {
+        display: block;
+        margin: auto;
+    }
+}
+
+#viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background: black;
+
+    canvas {
+        position: absolute;
+    }
+}
+.pjs-meta {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: #fff;
+    z-index: 100;
+}
+
+#controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    // background: #fff;
+    padding: 1em;
+
+    .above {
+        position: absolute;
+        bottom: 60px;
+        left: 1em;
+        width: 160px;
+    }
+
+    .edit-type {
+        display: none;
+        position: absolute;
+        left: 1em;
+        bottom: 80px;
+        background: #fff;
+        width: 16.7em;
+        padding: 1em;
+        @include border-radius( 3px );
+        @include transform( translateZ(0) );
+
+        label {
+            float: left;
+            color: $deep-grey-dark;
+            margin-right: 1em;
+            margin-bottom: 1em;
+        }
+
+        .radio-group {
+            float: left;
+            width: 10.5em;
+            > a {
+                margin-right: 2em;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+
+    .edit-group {
+        display: none;
+        width: 300px;
+        bottom: 150px;
+    }
+
+    &.state-add {
+        .ctrl-pause,
+        .ctrl-download,
+        .ctrl-edit,
+        .ctrl-edit-velocities {
+            display: none;
+        }
+    }
+
+    &.edit {
+        .ctrl-pause,
+        .ctrl-download {
+            display: none;
+        }
+        .edit-group,
+        .edit-type {
+            display: block;
+        }
+    }
+
+    &.state-edit-velocities {
+        .edit-group {
+            display: none;
+        }
+    }
+
+
+}
+
+#ctx-menu {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20em;
+    background: #fff;
+    padding: 1em;
+    border: 1px solid $grey;
+    z-index: 100;
+    @include border-radius( 3px );
+
+    .title {
+        margin: 0;
+        padding: 0 0 1em;
+    }
+
+    label {
+        clear: left;
+        float: left;
+        width: 7em;
+        margin-bottom: 0.5em;
+        display: block;
+        color: $deep-grey-dark;
+        text-align: left;
+    }
+
+    .ctrl-mass {
+        width: 4em;
+        float: left;
+    }
+
+    #ctrl-path {
+        float: left;
+        margin-top: 0.5em;
+    }
+
+    .slider {
+        margin-left: 12em;
+        margin-right: 0;
+
+        // .handle:after {
+        //     content: attr(data-val);
+        //     position: absolute;
+        //     top: -1.5em;
+        //     width: 80px;
+        //     color: $deep-grey-dark;
+        //     margin-left: -29px;
+        //     text-align: center;
+        //     font-size: 14px;
+        // }
+    }
+
+    .minicolors-theme-default .minicolors-swatch {
+        top: 0.2em;
+        left: 0.2em;
+    }
+
+    .minicolors-position-left .minicolors-panel {
+        bottom: 26px;
+    }
+
+    .ctrl-close {
+        position: absolute;
+        top: -0.6em;
+        right: -0.6em;
+        width: 1.3em;
+        height: 1.3em;
+        background: $deep-blue;
+        color: $blue-light;
+        text-align: center;
+        font-size: 20px;
+        line-height: 1.15em;
+        cursor: pointer;
+        border: 1px solid $blue-light;
+        @include border-radius( 50% );
+    }
+
+    input {
+        width: 8em;
+    }
+
+    .minicolors {
+        float: left;
+        margin-bottom: 0.4em;
+    }
+    .color {
+        outline: none;
+        border-color: $grey-dark;
+    }
+
+    button,
+    .btn {
+        margin-top: 1em;
+        padding: 0.4em 1em;
+    }
+}
