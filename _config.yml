@@ -3,7 +3,7 @@ markdown: rdiscount
 exclude: ["README.md", "CNAME", "LICENSE", "build", "config.rb", "Gruntfile.js", "package.json", "jshint.json"]
 
 title : "Chaotic Pendulum"
-id : "" # changeme
+id : "85732814424"
 description : "Create your own beautiful chaos."
 thumb: "thumb.gif"
 version: "0.0.1"
