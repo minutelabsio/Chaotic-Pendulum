@@ -8,6 +8,7 @@ js/page-boilerplate.js
 js/vendor/jquery.js
 js/vendor/hammer.js
 js/vendor/hammer.jquery.js
+js/modules/data-url-to-blob.js
 js/vendor/when/when.js
 js/util/events.js
 js/util/module.js

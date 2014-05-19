@@ -6,7 +6,7 @@ title : "Chaotic Pendulum"
 id : "85732814424"
 description : "Create your own beautiful chaos."
 thumb: "thumb.gif"
-version: "0.0.1"
+version: "0.0.2"
 
 ml_url: "http://minutelabs.io"
 ml_library: "http://labs.minutelabs.io/library"
