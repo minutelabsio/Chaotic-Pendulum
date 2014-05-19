@@ -1,6 +1,7 @@
 define([
     'jquery',
     'hammer.jquery',
+    'modules/data-url-to-blob',
     'moddef',
     'minicolors',
     'vendor/chroma',
@@ -16,6 +17,7 @@ define([
 ], function(
     $,
     _hjq,
+    dataURLtoBlob,
     M,
     _jqminicolors,
     chroma,
@@ -594,6 +596,13 @@ define([
                 ctrls.hammer()
                     .on('touch', '.ctrl-download', function( e ){
                         var img = self.getImage();
+                        if ( window.URL ){
+                            img = window.URL.createObjectURL( dataURLtoBlob(img) );
+                            setTimeout(function(){
+                                window.URL.revokeObjectURL( img );
+                            }, 5000);
+                        }
+
                         $(this).attr('href', img).attr('target', '_blank');
                         this.download = 'minutelabs-chaotic-pendulum.png';
                     })
@@ -732,14 +741,8 @@ define([
                 ;
             ctx.fillText('MinuteLabs.io', 96 + 30, h - 96/2 + 10 );
 
-            // for ( var i = 0, l = layers.length; i < l; ++i ){
-            //
-            //     el = this.renderer.layer( layers[i] ).el;
-            //     opacity = parseFloat(el.style.opacity, 10);
-            //     ctx.globalAlpha = isNaN(opacity) ? 1 : opacity;
-            //     ctx.drawImage(el, 0, 0);
-            // }
             ctx.globalAlpha = 1;
+
             return canvas.toDataURL('image/png');
         }
 
