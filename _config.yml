@@ -8,9 +8,9 @@ description : "Create your own beautiful chaos."
 thumb: "thumb.gif"
 version: "0.0.2"
 
-ml_url: "http://minutelabs.io"
-ml_library: "http://labs.minutelabs.io/library"
-ml_assets: "http://labs.minutelabs.io/assets"
+ml_url: "//minutelabs.io"
+ml_library: "//labs.minutelabs.io/library"
+ml_assets: "//labs.minutelabs.io/assets"
 library_path: "library-build"
 
 show :
